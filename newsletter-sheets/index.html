@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<!--
+  The Learning Loop — Google Sheets-powered newsletter reader.
+  CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | mguhlin.org | https://go.mgpd.org/lftx2606)
+  Set WEB_APP_URL below to your Apps Script /exec URL. Leave empty to use the bundled demo.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Learning Loop — Newsletter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#002855; --navy-900:#001a3d; --navy-700:#003b7a;
+    --gold:#FFB81C; --gold-600:#d99a00;
+    --ink:#1a2230; --muted:#5a6577; --bg:#f4f6fa; --card:#ffffff; --border:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Source Sans 3',-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6;}
+  a{color:var(--navy-700);text-decoration:none}
+  a:hover{color:var(--gold-600);text-decoration:underline}
+  .wrap{max-width:860px;margin:32px auto;background:var(--card);
+    box-shadow:0 6px 28px rgba(0,40,85,.10);border-radius:14px;overflow:hidden}
+  .masthead{background:var(--navy);color:#fff;padding:38px 44px;border-bottom:5px solid var(--gold)}
+  .masthead h1{font-family:'Merriweather',serif;margin:0;font-size:2.1rem;letter-spacing:.3px}
+  .masthead .meta{margin-top:8px;color:#cdd9ea;font-size:.98rem}
+  .masthead .theme{display:inline-block;margin-top:14px;background:var(--gold);color:var(--navy-900);
+    font-weight:700;padding:5px 14px;border-radius:999px;font-size:.9rem}
+  .body{padding:34px 44px}
+  .intro{font-size:1.12rem;color:#33405a;border-left:4px solid var(--gold);padding-left:16px;margin:0 0 26px}
+  h2{font-family:'Merriweather',serif;color:var(--navy);margin:34px 0 6px;font-size:1.5rem}
+  h3{color:var(--navy-700);margin:18px 0 6px;font-size:1.08rem;text-transform:uppercase;letter-spacing:.5px}
+  .box{background:#f0f4fa;border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin:18px 0}
+  .box h2{margin-top:0}
+  .nav-list{list-style:none;padding:0;margin:0}
+  .nav-list li{margin:6px 0}
+  .nav-list .num{display:inline-block;min-width:30px;height:24px;line-height:24px;text-align:center;
+    background:var(--gold);color:var(--navy-900);font-weight:700;border-radius:6px;margin-right:10px;font-size:.85rem}
+  article{border-top:1px solid var(--border);padding-top:8px}
+  .art-head{display:flex;align-items:baseline;gap:12px;margin-top:30px}
+  .art-head .num{flex:0 0 auto;background:var(--navy);color:var(--gold);font-weight:700;
+    border-radius:8px;padding:4px 12px;font-size:1rem}
+  .art-head h2{margin:0}
+  .img-ph{border:2px dashed var(--gold);background:#eef3fb;border-radius:10px;
+    padding:22px;text-align:center;color:var(--muted);font-style:italic;margin:14px 0}
+  ul.takeaways{margin:6px 0 0;padding-left:22px}
+  ul.takeaways li{margin:4px 0}
+  .attrib{font-size:.92rem;color:var(--muted);margin-top:12px;border-top:1px dotted var(--border);padding-top:10px}
+  .attrib strong{color:var(--ink)}
+  .disclaimer{font-size:.88rem;color:var(--muted);background:#f0f4fa;border-left:4px solid var(--gold);
+    padding:14px 18px;border-radius:0 8px 8px 0;margin:30px 0 6px;font-style:italic}
+  .checklist{list-style:none;padding:0;margin:8px 0 0}
+  .checklist li::before{content:"\2610  ";color:var(--muted)}
+  .checklist li.done::before{content:"\2611  ";color:#1f9d55}
+  .state{padding:60px 44px;text-align:center;color:var(--muted)}
+  .state .spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);
+    border-radius:50%;display:inline-block;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .site-footer{background:var(--navy);color:#fff;text-align:center;padding:26px 20px}
+  .site-footer a{color:var(--gold);text-decoration:none}
+  .site-footer a:hover{text-decoration:underline}
+  .site-footer .contact-line{color:#cdd9ea;font-size:.92rem;margin-top:6px}
+  @media (max-width:600px){.masthead,.body{padding:24px 20px}.masthead h1{font-size:1.6rem}}
+  @media print{
+    body{background:#fff}.wrap{box-shadow:none;margin:0;max-width:100%}
+    .masthead{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .site-footer{background:#fff;color:#555}.site-footer a{color:#555}
+  }
+</style>
+</head>
+<body>
+<div id="exportbar"></div>
+<div class="wrap">
+  <div id="app">
+    <div class="state"><span class="spin"></span><p>Loading the latest issue…</p></div>
+  </div>
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="cc-line"><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> &middot; Miguel Guhlin</p>
+      <p class="contact-line">
+        <a href="mailto:mguhlin@tcea.org">mguhlin@tcea.org</a> &middot;
+        <a href="https://mguhlin.org" target="_blank" rel="noopener">mguhlin.org</a> &middot;
+        <a href="https://go.mgpd.org/lftx2606" target="_blank" rel="noopener">go.mgpd.org/lftx2606</a>
+      </p>
+    </div>
+  </footer>
+</div>
+
+<!-- Embedded demo data: lets the page work on a plain double-click (file://),
+     where browsers block reading sample-data.json. Same content as sample-data.json. -->
+<script type="application/json" id="demo-data">
+{
+  "issueSetup": {
+    "Newsletter Name": "The Learning Loop",
+    "Issue Number": "12",
+    "Issue Date": "June 16, 2026",
+    "Theme": "Designing Calmer AI Workflows",
+    "Audience": "Educators and instructional leaders",
+    "Tone": "Practical, clear, reflective",
+    "Intro": "Most weeks, the problem is not too little information — it is too much. This issue looks at how a few deliberate workflows can turn the daily flood of articles, tools, and updates into something you can actually use with students and teams. Less noise, more signal.",
+    "In This Issue": "Three short reads on building sustainable AI habits, plus a tool worth trying and one trend to watch.",
+    "Closing Reflection": "Pick one workflow from this issue and run it for a week. The goal is not to do more — it is to make the work you already do a little lighter and a lot more intentional. What is the smallest loop you could close this week?"
+  },
+  "articles": [
+    {
+      "Nav #": "1",
+      "Short Navigation Title": "Start With the Loop, Not the Tool",
+      "Title": "Start With the Loop, Not the Tool",
+      "Key Facts / Summary": "Teams often adopt a new AI tool before they have named the workflow it is meant to serve. Mapping the loop first — capture, summarize, decide, share — makes it obvious which tool (if any) is actually needed and where time is really lost.",
+      "Why It Matters": "When the workflow is clear, tool choices get simpler and training gets shorter. Educators spend less time chasing features and more time on the parts only a human can do: judgment, context, and care.",
+      "Practical Takeaways": "Draw your current content workflow on one page before adopting anything new.|Name the single step where time leaks most, and target only that.|Pilot one workflow with one team for two weeks before scaling.",
+      "Source / Publication": "Example Learning Lab",
+      "URL": "https://example.org/start-with-the-loop",
+      "Author": "Jordan Avery",
+      "Date": "June 2026",
+      "Image Description": "A simple hand-drawn loop diagram on a whiteboard with four labeled stages"
+    },
+    {
+      "Nav #": "2",
+      "Short Navigation Title": "Summaries People Trust",
+      "Title": "Writing AI Summaries People Actually Trust",
+      "Key Facts / Summary": "An AI-generated summary is only useful if readers believe it. The most trusted digests pair a short original summary with a clear link to the source and a note on what was left out, so readers can verify in seconds.",
+      "Why It Matters": "Trust is the currency of any publication. A transparent summary respects readers' time and protects the original author, while still giving busy educators a fast way in.",
+      "Practical Takeaways": "Always link to the original source, not a search result.|Keep summaries short enough that readers still want the full piece.|Add a one-line note on uncertainty or scope when it matters.",
+      "Source / Publication": "Open Editorial Notes",
+      "URL": "https://example.org/summaries-people-trust",
+      "Author": "Priya Nandakumar",
+      "Date": "May 2026",
+      "Image Description": "A clean side-by-side of a short summary card next to a linked source article"
+    },
+    {
+      "Nav #": "3",
+      "Short Navigation Title": "From Sheet to Publication",
+      "Title": "From a Spreadsheet to a Polished Publication",
+      "Key Facts / Summary": "Keeping issue content in a structured spreadsheet — one row per item, with clear columns — lets a small script turn raw notes into a formatted newsletter automatically. The spreadsheet stays the single source of truth.",
+      "Why It Matters": "Separating content from layout means anyone on the team can contribute without touching code, and the published result stays consistent issue after issue.",
+      "Practical Takeaways": "Use one column per field: summary, why it matters, takeaways, source.|Mark each row Include? Yes/No so drafts and finals live together.|Let the layout be generated, so editors focus on the writing.",
+      "Source / Publication": "Practical Publishing Guide",
+      "URL": "https://example.org/sheet-to-publication",
+      "Author": "Marcus Lee",
+      "Date": "June 2026",
+      "Image Description": "A spreadsheet on the left with an arrow pointing to a formatted newsletter on the right"
+    }
+  ],
+  "optionalSections": [
+    {
+      "Section": "Try This",
+      "Include?": "Yes",
+      "Content": "Take last week's saved links and write a two-sentence original summary for each. Notice which ones you can no longer remember why you saved — those are candidates to drop."
+    },
+    {
+      "Section": "What to Watch",
+      "Include?": "Yes",
+      "Content": "Watch for tools that promise to replace editorial judgment entirely. The durable wins are the ones that speed up capture and formatting while keeping a human firmly in the decision loop."
+    }
+  ],
+  "imagePlan": [
+    { "Image Type": "Placeholder", "Include?": "Yes", "Description": "Use descriptive placeholders this issue; generate or license real visuals before wide distribution." }
+  ],
+  "publishingChecklist": [
+    { "item": "All source links verified and working", "done": true, "owner": "Editor", "notes": "" },
+    { "item": "Summaries written in original language", "done": true, "owner": "Editor", "notes": "" },
+    { "item": "Images licensed, public domain, or placeholders", "done": false, "owner": "Designer", "notes": "Placeholders in this draft" }
+  ]
+}
+</script>
+
+<script src="export.js"></script>
+<script>
+// ===== CONFIG =====
+// Paste your Apps Script Web App /exec URL here. Empty = use bundled demo data.
+const WEB_APP_URL = "";
+
+const DISCLAIMER = "This newsletter provides original commentary and summaries of publicly available sources for educational and informational purposes. Readers are encouraged to visit the linked sources for full context. Article images are represented with placeholders unless separately licensed, public domain, Creative Commons licensed, or created for this issue.";
+
+const esc = s => (s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const slug = s => String(s||"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+function splitList(v){
+  if(Array.isArray(v)) return v.filter(Boolean);
+  return String(v||"").split(/\n|\|/).map(s=>s.replace(/^[-*]\s*/,"").trim()).filter(Boolean);
+}
+
+// Demo works on a plain double-click: tries the live URL, then the JSON file,
+// then the embedded copy (used when the browser blocks file:// reads).
+async function getData(){
+  if(WEB_APP_URL){
+    const res = await fetch(WEB_APP_URL, {redirect:"follow"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    return res.json();
+  }
+  try{
+    const res = await fetch("./sample-data.json");
+    if(res.ok) return await res.json();
+  }catch(e){ /* file:// blocks this — fall through to embedded data */ }
+  return JSON.parse(document.getElementById("demo-data").textContent);
+}
+
+async function load(){
+  const app = document.getElementById("app");
+  try{
+    render(await getData());
+  }catch(err){
+    app.innerHTML = '<div class="state"><h2>Could not load the newsletter</h2>'+
+      '<p>'+esc(err.message)+'</p>'+
+      '<p>Check the <code>WEB_APP_URL</code> in this file, or open the demo by '+
+      'double-clicking <code>index.html</code>.</p></div>';
+  }
+}
+
+function render(d){
+  const s = d.issueSetup || {};
+  const arts = d.articles || [];
+  let h = '';
+  h += '<div class="masthead">';
+  h += '<h1>'+esc(s["Newsletter Name"]||"Newsletter")+'</h1>';
+  h += '<div class="meta">Issue #'+esc(s["Issue Number"]||"")+' &middot; '+esc(s["Issue Date"]||"")+'</div>';
+  if(s["Theme"]) h += '<span class="theme">Theme: '+esc(s["Theme"])+'</span>';
+  h += '</div><div class="body">';
+
+  if(s["Intro"]) h += '<p class="intro">'+esc(s["Intro"])+'</p>';
+
+  if(s["In This Issue"]){
+    h += '<div class="box"><h2>In This Issue</h2><p>'+esc(s["In This Issue"])+'</p></div>';
+  }
+
+  // Article navigation
+  h += '<div class="box"><h2>Article Navigation</h2><ul class="nav-list">';
+  arts.forEach((a,i)=>{
+    const n = a["Nav #"]||(i+1);
+    const t = a["Short Navigation Title"]||a["Title"]||"Untitled";
+    h += '<li><span class="num">#'+esc(n)+'</span><a href="#a'+(i+1)+'">'+esc(t)+'</a></li>';
+  });
+  h += '</ul></div>';
+
+  // Articles
+  arts.forEach((a,i)=>{
+    const n = a["Nav #"]||(i+1);
+    const t = a["Title"]||a["Short Navigation Title"]||"Untitled";
+    h += '<article id="a'+(i+1)+'">';
+    h += '<div class="art-head"><span class="num">#'+esc(n)+'</span><h2>'+esc(t)+'</h2></div>';
+    if(a["Image Description"]) h += '<div class="img-ph">Image: '+esc(a["Image Description"])+'</div>';
+    if(a["Key Facts / Summary"]) h += '<h3>The Big Idea</h3><p>'+esc(a["Key Facts / Summary"])+'</p>';
+    if(a["Why It Matters"]) h += '<h3>Why It Matters</h3><p>'+esc(a["Why It Matters"])+'</p>';
+    const tk = splitList(a["Practical Takeaways"]);
+    if(tk.length){ h += '<h3>Practical Takeaways</h3><ul class="takeaways">'+tk.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>'; }
+    h += '<div class="attrib">';
+    if(a["Source / Publication"]){
+      h += '<strong>Source:</strong> '+(a["URL"]?'<a href="'+esc(a["URL"])+'" target="_blank" rel="noopener">'+esc(a["Source / Publication"])+'</a>':esc(a["Source / Publication"]));
+    }
+    if(a["Author"]) h += '<br><strong>Author:</strong> '+esc(a["Author"]);
+    if(a["Date"]) h += '<br><strong>Date:</strong> '+esc(a["Date"]);
+    h += '</div></article>';
+  });
+
+  // Optional sections
+  (d.optionalSections||[]).forEach(o=>{
+    h += '<h2>'+esc(o["Section"]||"More")+'</h2><p>'+esc(o["Content"]||"")+'</p>';
+  });
+
+  if(s["Closing Reflection"]){
+    h += '<h2>Closing Reflection</h2><p>'+esc(s["Closing Reflection"])+'</p>';
+  }
+
+  h += '<div class="disclaimer">'+esc(DISCLAIMER)+'</div>';
+  h += '</div>';
+
+  document.getElementById("app").innerHTML = h;
+  // smooth scroll
+  document.querySelectorAll('a[href^="#a"]').forEach(a=>{
+    a.addEventListener("click",e=>{
+      const el=document.querySelector(a.getAttribute("href"));
+      if(el){e.preventDefault();el.scrollIntoView({behavior:"smooth"});}
+    });
+  });
+
+  // Copy bar: Markdown / HTML / formatted-for-email
+  if(window.ExportBar){
+    ExportBar.mount({
+      mount:"#exportbar", label:"newsletter",
+      getMarkdown:()=>exportMarkdown(d),
+      getHtml:()=>exportHtml(d)
+    });
+  }
+}
+
+// Build a clean Markdown version of the finished issue.
+function exportMarkdown(d){
+  const s=d.issueSetup||{}, arts=d.articles||[];
+  const L=[];
+  L.push('# '+(s["Newsletter Name"]||"Newsletter"));
+  L.push('## Issue #'+(s["Issue Number"]||"")+' · '+(s["Issue Date"]||""));
+  if(s["Theme"]) L.push('### Theme: '+s["Theme"]);
+  L.push('');
+  if(s["Intro"]){ L.push(s["Intro"]); L.push(''); }
+  L.push('---'); L.push('');
+  if(s["In This Issue"]){ L.push('## In This Issue'); L.push(''); L.push(s["In This Issue"]); L.push(''); L.push('---'); L.push(''); }
+  L.push('## Article Navigation'); L.push('');
+  arts.forEach((a,i)=>{ const n=a["Nav #"]||(i+1), t=a["Short Navigation Title"]||a["Title"]||"Untitled";
+    L.push('#'+n+' - ['+t+'](#'+slug(n+'-'+t)+')  '); });
+  L.push('');
+  arts.forEach((a,i)=>{ const n=a["Nav #"]||(i+1), t=a["Title"]||a["Short Navigation Title"]||"Untitled";
+    L.push('---'); L.push('');
+    L.push('## #'+n+' - '+t); L.push('');
+    if(a["Image Description"]){ L.push('![Image Placeholder: '+a["Image Description"]+']'); L.push(''); }
+    if(a["Key Facts / Summary"]){ L.push('### The Big Idea'); L.push(''); L.push(a["Key Facts / Summary"]); L.push(''); }
+    if(a["Why It Matters"]){ L.push('### Why It Matters'); L.push(''); L.push(a["Why It Matters"]); L.push(''); }
+    const tk=splitList(a["Practical Takeaways"]);
+    if(tk.length){ L.push('### Practical Takeaways'); L.push(''); tk.forEach(x=>L.push('- '+x)); L.push(''); }
+    if(a["Source / Publication"]) L.push('**Source:** '+(a["URL"]?'['+a["Source / Publication"]+']('+a["URL"]+')':a["Source / Publication"])+'  ');
+    if(a["Author"]) L.push('**Author:** '+a["Author"]+'  ');
+    if(a["Date"]) L.push('**Date:** '+a["Date"]+'  ');
+    L.push('');
+  });
+  (d.optionalSections||[]).forEach(o=>{ L.push('---'); L.push(''); L.push('## '+(o["Section"]||"More")); L.push(''); L.push(o["Content"]||""); L.push(''); });
+  if(s["Closing Reflection"]){ L.push('---'); L.push(''); L.push('## Closing Reflection'); L.push(''); L.push(s["Closing Reflection"]); L.push(''); }
+  L.push('---'); L.push(''); L.push('> '+DISCLAIMER);
+  return L.join('\n');
+}
+
+// Build clean semantic HTML of the finished issue.
+function exportHtml(d){
+  const s=d.issueSetup||{}, arts=d.articles||[];
+  const H=[];
+  H.push('<h1>'+esc(s["Newsletter Name"]||"Newsletter")+'</h1>');
+  H.push('<p><strong>Issue #'+esc(s["Issue Number"]||"")+'</strong> · '+esc(s["Issue Date"]||"")+'</p>');
+  if(s["Theme"]) H.push('<p><em>Theme: '+esc(s["Theme"])+'</em></p>');
+  if(s["Intro"]) H.push('<p>'+esc(s["Intro"])+'</p>');
+  H.push('<hr>');
+  if(s["In This Issue"]) H.push('<h2>In This Issue</h2><p>'+esc(s["In This Issue"])+'</p><hr>');
+  H.push('<h2>Article Navigation</h2><ul>');
+  arts.forEach((a,i)=>{ const n=a["Nav #"]||(i+1), t=a["Short Navigation Title"]||a["Title"]||"Untitled"; H.push('<li>#'+esc(n)+' – '+esc(t)+'</li>'); });
+  H.push('</ul>');
+  arts.forEach((a,i)=>{ const n=a["Nav #"]||(i+1), t=a["Title"]||a["Short Navigation Title"]||"Untitled";
+    H.push('<hr><h2>#'+esc(n)+' - '+esc(t)+'</h2>');
+    if(a["Image Description"]) H.push('<p><em>Image: '+esc(a["Image Description"])+'</em></p>');
+    if(a["Key Facts / Summary"]) H.push('<h3>The Big Idea</h3><p>'+esc(a["Key Facts / Summary"])+'</p>');
+    if(a["Why It Matters"]) H.push('<h3>Why It Matters</h3><p>'+esc(a["Why It Matters"])+'</p>');
+    const tk=splitList(a["Practical Takeaways"]); if(tk.length) H.push('<h3>Practical Takeaways</h3><ul>'+tk.map(x=>'<li>'+esc(x)+'</li>').join('')+'</ul>');
+    let src=''; if(a["Source / Publication"]) src+='<strong>Source:</strong> '+(a["URL"]?'<a href="'+esc(a["URL"])+'">'+esc(a["Source / Publication"])+'</a>':esc(a["Source / Publication"]));
+    if(a["Author"]) src+='<br><strong>Author:</strong> '+esc(a["Author"]);
+    if(a["Date"]) src+='<br><strong>Date:</strong> '+esc(a["Date"]);
+    if(src) H.push('<p>'+src+'</p>');
+  });
+  (d.optionalSections||[]).forEach(o=>{ H.push('<hr><h2>'+esc(o["Section"]||"More")+'</h2><p>'+esc(o["Content"]||"")+'</p>'); });
+  if(s["Closing Reflection"]) H.push('<hr><h2>Closing Reflection</h2><p>'+esc(s["Closing Reflection"])+'</p>');
+  H.push('<hr><blockquote>'+esc(DISCLAIMER)+'</blockquote>');
+  return H.join('');
+}
+load();
+</script>
+</body>
+</html>

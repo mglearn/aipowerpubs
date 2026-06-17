@@ -1,0 +1,78 @@
+{
+  "issueSetup": {
+    "Newsletter Name": "The Learning Loop",
+    "Issue Number": "12",
+    "Issue Date": "June 16, 2026",
+    "Theme": "Designing Calmer AI Workflows",
+    "Audience": "Educators and instructional leaders",
+    "Tone": "Practical, clear, reflective",
+    "Intro": "Most weeks, the problem is not too little information — it is too much. This issue looks at how a few deliberate workflows can turn the daily flood of articles, tools, and updates into something you can actually use with students and teams. Less noise, more signal.",
+    "In This Issue": "Three short reads on building sustainable AI habits, plus a tool worth trying and one trend to watch.",
+    "Closing Reflection": "Pick one workflow from this issue and run it for a week. The goal is not to do more — it is to make the work you already do a little lighter and a lot more intentional. What is the smallest loop you could close this week?"
+  },
+  "articles": [
+    {
+      "Nav #": "1",
+      "Short Navigation Title": "Start With the Loop, Not the Tool",
+      "Title": "Start With the Loop, Not the Tool",
+      "Key Facts / Summary": "Teams often adopt a new AI tool before they have named the workflow it is meant to serve. Mapping the loop first — capture, summarize, decide, share — makes it obvious which tool (if any) is actually needed and where time is really lost.",
+      "Why It Matters": "When the workflow is clear, tool choices get simpler and training gets shorter. Educators spend less time chasing features and more time on the parts only a human can do: judgment, context, and care.",
+      "Practical Takeaways": "Draw your current content workflow on one page before adopting anything new.|Name the single step where time leaks most, and target only that.|Pilot one workflow with one team for two weeks before scaling.",
+      "Source / Publication": "Example Learning Lab",
+      "URL": "https://example.org/start-with-the-loop",
+      "Author": "Jordan Avery",
+      "Date": "June 2026",
+      "Image Description": "A simple hand-drawn loop diagram on a whiteboard with four labeled stages"
+    },
+    {
+      "Nav #": "2",
+      "Short Navigation Title": "Summaries People Trust",
+      "Title": "Writing AI Summaries People Actually Trust",
+      "Key Facts / Summary": "An AI-generated summary is only useful if readers believe it. The most trusted digests pair a short original summary with a clear link to the source and a note on what was left out, so readers can verify in seconds.",
+      "Why It Matters": "Trust is the currency of any publication. A transparent summary respects readers' time and protects the original author, while still giving busy educators a fast way in.",
+      "Practical Takeaways": "Always link to the original source, not a search result.|Keep summaries short enough that readers still want the full piece.|Add a one-line note on uncertainty or scope when it matters.",
+      "Source / Publication": "Open Editorial Notes",
+      "URL": "https://example.org/summaries-people-trust",
+      "Author": "Priya Nandakumar",
+      "Date": "May 2026",
+      "Image Description": "A clean side-by-side of a short summary card next to a linked source article"
+    },
+    {
+      "Nav #": "3",
+      "Short Navigation Title": "From Sheet to Publication",
+      "Title": "From a Spreadsheet to a Polished Publication",
+      "Key Facts / Summary": "Keeping issue content in a structured spreadsheet — one row per item, with clear columns — lets a small script turn raw notes into a formatted newsletter automatically. The spreadsheet stays the single source of truth.",
+      "Why It Matters": "Separating content from layout means anyone on the team can contribute without touching code, and the published result stays consistent issue after issue.",
+      "Practical Takeaways": "Use one column per field: summary, why it matters, takeaways, source.|Mark each row Include? Yes/No so drafts and finals live together.|Let the layout be generated, so editors focus on the writing.",
+      "Source / Publication": "Practical Publishing Guide",
+      "URL": "https://example.org/sheet-to-publication",
+      "Author": "Marcus Lee",
+      "Date": "June 2026",
+      "Image Description": "A spreadsheet on the left with an arrow pointing to a formatted newsletter on the right"
+    }
+  ],
+  "optionalSections": [
+    {
+      "Section": "Try This",
+      "Include?": "Yes",
+      "Content": "Take last week's saved links and write a two-sentence original summary for each. Notice which ones you can no longer remember why you saved — those are candidates to drop."
+    },
+    {
+      "Section": "What to Watch",
+      "Include?": "Yes",
+      "Content": "Watch for tools that promise to replace editorial judgment entirely. The durable wins are the ones that speed up capture and formatting while keeping a human firmly in the decision loop."
+    }
+  ],
+  "imagePlan": [
+    {
+      "Image Type": "Placeholder",
+      "Include?": "Yes",
+      "Description": "Use descriptive placeholders this issue; generate or license real visuals before wide distribution."
+    }
+  ],
+  "publishingChecklist": [
+    { "item": "All source links verified and working", "done": true, "owner": "Editor", "notes": "" },
+    { "item": "Summaries written in original language", "done": true, "owner": "Editor", "notes": "" },
+    { "item": "Images licensed, public domain, or placeholders", "done": false, "owner": "Designer", "notes": "Placeholders in this draft" }
+  ]
+}

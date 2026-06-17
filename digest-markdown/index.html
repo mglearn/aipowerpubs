@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<!--
+  The Reading Loop — Markdown-only digest reader.
+  CC BY-SA 4.0 · Miguel Guhlin · mguhlin@tcea.org · https://mguhlin.org
+  This is the MARKDOWN-ONLY variant: no Google account, no Apps Script, no backend.
+  Issues are plain .md files in content/, fetched and rendered with marked.js.
+-->
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Reading Loop — A Reading List &amp; Link Digest</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Markdown rendering + sanitizing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+
+  <style>
+    :root{
+      --navy:#002855; --navy-900:#001a3d; --navy-700:#003b7a;
+      --gold:#FFB81C; --gold-600:#d99a00;
+      --ink:#1a2230; --muted:#5a6577; --bg:#f4f6fa; --card:#ffffff; --border:#e2e8f0;
+    }
+
+    *,*::before,*::after{ box-sizing:border-box; }
+
+    html{ scroll-behavior:smooth; }
+
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--ink);
+      font-family:'Source Sans 3', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      line-height:1.65;
+      font-size:17px;
+    }
+
+    a{ color:var(--navy); text-decoration:none; }
+    a:hover{ color:var(--gold-600); text-decoration:underline; }
+
+    /* ---------- Masthead ---------- */
+    .masthead{
+      background:var(--navy);
+      color:#fff;
+      border-bottom:4px solid var(--gold);
+      padding:28px 20px 24px;
+      text-align:center;
+    }
+    .masthead h1{
+      font-family:'Merriweather', Georgia, serif;
+      font-weight:900;
+      margin:0 0 6px;
+      font-size:2rem;
+      letter-spacing:.3px;
+    }
+    .masthead .tagline{
+      margin:0;
+      color:#cdd8ea;
+      font-size:1.02rem;
+      font-weight:500;
+    }
+    .masthead .kicker{
+      display:inline-block;
+      margin:0 0 10px;
+      color:var(--gold);
+      font-weight:700;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      font-size:.72rem;
+    }
+
+    /* ---------- Layout ---------- */
+    .layout{
+      max-width:1180px;
+      margin:24px auto;
+      padding:0 20px;
+      display:grid;
+      grid-template-columns:300px minmax(0,1fr);
+      gap:24px;
+      align-items:start;
+    }
+
+    /* ---------- Issues index ---------- */
+    .sidebar{ position:sticky; top:20px; }
+
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:12px;
+      box-shadow:0 1px 3px rgba(0,40,85,.06);
+      overflow:hidden;
+    }
+    .panel-head{
+      background:var(--navy-900);
+      color:#fff;
+      padding:12px 16px;
+      font-family:'Merriweather', Georgia, serif;
+      font-weight:700;
+      font-size:1rem;
+    }
+
+    .issue-list{ list-style:none; margin:0; padding:6px; }
+    .issue-list li{ margin:2px 0; }
+    .issue-link{
+      display:block;
+      padding:11px 14px;
+      border-radius:8px;
+      border-left:4px solid transparent;
+      color:var(--navy);
+      cursor:pointer;
+    }
+    .issue-link:hover{ background:var(--bg); text-decoration:none; color:var(--navy); }
+    .issue-link .it-title{ font-weight:600; display:block; }
+    .issue-link .it-date{ color:var(--muted); font-size:.85rem; }
+    .issue-link.active{
+      background:#fff7e6;
+      border-left-color:var(--gold);
+    }
+    .issue-link.active .it-title{ color:var(--navy-900); }
+
+    /* In-page TOC */
+    .toc{ margin-top:18px; }
+    .toc-list{ list-style:none; margin:0; padding:6px; }
+    .toc-list li{ margin:1px 0; }
+    .toc-list a{
+      display:block;
+      padding:6px 14px;
+      border-radius:6px;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+    .toc-list a:hover{ background:var(--bg); color:var(--navy); text-decoration:none; }
+    .toc-list a.lvl-3{ padding-left:30px; font-size:.88rem; }
+    .toc-empty{ padding:12px 16px; color:var(--muted); font-size:.9rem; }
+
+    /* ---------- Main reading card ---------- */
+    .reader-wrap{ display:flex; justify-content:center; }
+    .reader{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow:0 2px 10px rgba(0,40,85,.07);
+      padding:44px 52px;
+      width:100%;
+      max-width:820px;
+    }
+
+    .state{
+      padding:60px 20px;
+      text-align:center;
+      color:var(--muted);
+    }
+    .state h2{ color:var(--navy); font-family:'Merriweather',serif; }
+    .state.error{ color:#7a1f1f; }
+    .state code{
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:6px;
+      padding:2px 7px;
+      font-size:.92em;
+      color:var(--navy-900);
+    }
+    .spinner{
+      width:34px; height:34px; margin:0 auto 18px;
+      border:3px solid var(--border);
+      border-top-color:var(--gold);
+      border-radius:50%;
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin{ to{ transform:rotate(360deg); } }
+
+    /* ---------- Rendered markdown ---------- */
+    .md{ color:var(--ink); }
+    .md h1{
+      font-family:'Merriweather', Georgia, serif;
+      color:var(--navy-900);
+      font-weight:900;
+      font-size:2.05rem;
+      line-height:1.25;
+      margin:0 0 .3em;
+    }
+    .md h2{
+      font-family:'Merriweather', Georgia, serif;
+      color:var(--navy);
+      font-weight:700;
+      font-size:1.5rem;
+      margin:1.6em 0 .5em;
+      padding-bottom:.25em;
+      border-bottom:2px solid var(--border);
+      scroll-margin-top:20px;
+    }
+    .md h3{
+      font-family:'Source Sans 3', sans-serif;
+      color:var(--navy-700);
+      font-weight:700;
+      font-size:1.12rem;
+      margin:1.3em 0 .35em;
+      scroll-margin-top:20px;
+    }
+    .md h3::before{
+      content:"";
+      display:inline-block;
+      width:8px; height:8px;
+      margin-right:9px;
+      background:var(--gold);
+      border-radius:2px;
+      vertical-align:middle;
+    }
+    .md p{ margin:.7em 0 1em; }
+    .md a{ color:var(--navy); text-decoration:underline; text-decoration-color:rgba(0,40,85,.25); }
+    .md a:hover{ color:var(--gold-600); text-decoration-color:var(--gold); }
+    .md ul, .md ol{ margin:.4em 0 1.2em; padding-left:1.5em; }
+    .md li{ margin:.4em 0; }
+    .md strong{ color:var(--navy-900); }
+    .md hr{ border:none; border-top:2px solid var(--border); margin:2em 0; }
+    .md img{ max-width:100%; height:auto; border-radius:10px; display:block; margin:1em 0; }
+    .md blockquote{
+      margin:1.2em 0;
+      padding:.8em 1.1em;
+      border-left:5px solid var(--gold);
+      background:rgba(0,40,85,.045);
+      color:var(--muted);
+      font-style:italic;
+      border-radius:0 8px 8px 0;
+    }
+    .md blockquote p{ margin:.3em 0; }
+    .md code{
+      background:var(--bg);
+      border:1px solid var(--border);
+      border-radius:5px;
+      padding:1px 6px;
+      font-size:.9em;
+    }
+
+    /* ---------- Footer ---------- */
+    .site-footer{
+      background:var(--navy);
+      color:#fff;
+      margin-top:40px;
+      padding:26px 20px;
+      text-align:center;
+    }
+    .footer-inner{ max-width:820px; margin:0 auto; }
+    .site-footer p{ margin:.35em 0; font-size:.92rem; }
+    .site-footer a{ color:var(--gold); }
+    .site-footer a:hover{ color:#fff; }
+    .site-footer .cc-line{ font-weight:600; }
+    .site-footer .contact-line{ color:#cdd8ea; }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width:880px){
+      .layout{ grid-template-columns:1fr; }
+      .sidebar{ position:static; }
+      .reader{ padding:30px 22px; }
+      .masthead h1{ font-size:1.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="masthead">
+    <span class="kicker">A Reading List &amp; Link Digest</span>
+    <h1>The Reading Loop</h1>
+    <p class="tagline">Curated education-technology reading, one issue at a time.</p>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <nav class="panel" aria-label="Issues">
+        <div class="panel-head">Issues</div>
+        <ul class="issue-list" id="issueList"></ul>
+      </nav>
+
+      <nav class="panel toc" aria-label="On this page">
+        <div class="panel-head">On This Page</div>
+        <ul class="toc-list" id="tocList">
+          <li class="toc-empty">Select an issue to see its contents.</li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="reader-wrap">
+      <article class="reader">
+        <div id="exportbar"></div>
+        <div id="content">
+          <div class="state"><div class="spinner"></div>Loading issue…</div>
+        </div>
+      </article>
+    </main>
+  </div>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <p class="cc-line"><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> &middot; Miguel Guhlin</p>
+      <p class="contact-line">
+        <a href="mailto:mguhlin@tcea.org">mguhlin@tcea.org</a> &middot;
+        <a href="https://mguhlin.org" target="_blank" rel="noopener">mguhlin.org</a> &middot;
+        <a href="https://go.mgpd.org/lftx2606" target="_blank" rel="noopener">go.mgpd.org/lftx2606</a>
+      </p>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       EMBEDDED ISSUE MARKDOWN (fallback for double-click / file:// use)
+       Each block holds the VERBATIM contents of the matching content/*.md file.
+       The loader tries fetch() of the real file first; if that fails (as it
+       does when you double-click this page), it reads the matching block below.
+       The id here ("md-issue-12") must match the ISSUES id ("issue-12").
+       To keep double-click preview working for a new issue, add a matching
+       <script type="text/markdown" id="md-issue-NN"> block here too.
+       ========================================================================= -->
+
+  <script type="text/markdown" id="md-issue-12"># The Reading Loop
+
+**Issue #12 — June 12, 2026**
+
+Some weeks the throughline finds you. This issue kept circling back to feedback — not the red-pen kind, but the quiet, well-timed nudge that helps a learner adjust before a habit sets. I read four pieces that, together, made me rethink how often I confuse *grading* with *responding*. As always, the summaries below are my own framing; follow the links for the full arguments.
+
+## Article Navigation
+
+- #1 — Feedback That Arrives in Time
+- #2 — The Comment Nobody Reads
+- #3 — Peer Review Without the Pile-Up
+- #4 — Rubrics as Conversation Starters
+
+---
+
+## #1 - Feedback That Arrives in Time
+
+> Image: a clean visual of a stopwatch resting on an open notebook, soft daylight.
+
+### The Big Idea
+Feedback loses most of its value the moment it goes cold. The piece argues that *timing* outranks *thoroughness*: a short note delivered while the work is still warm beats an essay of corrections returned two weeks later.
+
+### Why It Matters
+When response is delayed, students have already moved on — and so have their misconceptions, now quietly reinforced. Fast, lightweight feedback keeps the learner in a position to actually act on it.
+
+### Practical Takeaways
+- Aim for a 48-hour response window on formative work, even if the note is brief.
+- Replace one long end-of-unit comment with three short mid-unit ones.
+- Use a quick voice memo or margin note instead of a polished paragraph.
+
+**Source:** [Timely Practice Review](https://www.example.org/feedback-in-time)
+**Author:** Dr. Renata Foss
+
+---
+
+## #2 - The Comment Nobody Reads
+
+> Image: a clean visual of a returned paper with untouched margin notes.
+
+### The Big Idea
+Most written feedback is never used, not because students don't care, but because it's framed as a verdict rather than a next step. Reframing comments as a single actionable question changes whether they get read at all.
+
+### Why It Matters
+If feedback isn't acted on, it isn't feedback — it's just commentary. Shifting from judgment to invitation turns a closed loop into an open one.
+
+### Practical Takeaways
+- End each comment with one question the student can answer in a revision.
+- Limit yourself to the two highest-leverage notes per piece.
+- Ask students to reply to your comment before they revise.
+
+**Source:** [The Margins Journal](https://www.example.org/comment-nobody-reads)
+**Author:** Theo Marwick
+
+---
+
+## #3 - Peer Review Without the Pile-Up
+
+> Image: a clean visual of two students trading drafts across a small table.
+
+### The Big Idea
+Peer review fails when it's vague ("looks good!") or crushing ("rewrite everything"). Structured prompts that ask reviewers to *notice* before they *judge* produce feedback both sides can use.
+
+### Why It Matters
+Done well, peer review multiplies the amount of timely response a learner gets while teaching the reviewer to read critically — a two-for-one that no single teacher can scale alone.
+
+### Practical Takeaways
+- Give reviewers a sentence stem: "One thing that worked for me was…"
+- Cap each review at three observations to prevent overwhelm.
+- Have authors mark *what kind* of feedback they want before sharing.
+
+**Source:** [Collaborative Classroom Notes](https://www.example.org/peer-review-pileup)
+**Author:** Mireille Adebayo
+
+---
+
+## #4 - Rubrics as Conversation Starters
+
+> Image: a clean visual of a simple rubric pinned beside a whiteboard.
+
+### The Big Idea
+A rubric isn't a scoring machine; it's a shared vocabulary. The article makes the case for co-building rubrics with students so the criteria become something they can talk about, not just be measured against.
+
+### Why It Matters
+When learners help name what quality looks like, they can self-assess long before the work reaches you — closing the feedback loop from the inside.
+
+### Practical Takeaways
+- Draft one rubric row together as a class before an assignment.
+- Translate jargon into student language ("clear" beats "demonstrates clarity").
+- Let students annotate their own work against the rubric before submitting.
+
+**Source:** [Assessment Dialogues](https://www.example.org/rubrics-conversation)
+**Author:** Sam Okonkwo
+
+---
+
+## Closing Reflection
+
+The thread running through all four reads: feedback is a relationship, not a transaction. Speed, specificity, and shared language each turn a one-way verdict into a back-and-forth a learner can grow inside. This week I'm picking one class and trying the 48-hour rule. We'll see what loosens.
+
+See you in the next loop.
+
+> This newsletter provides original commentary and summaries of publicly available sources for educational and informational purposes. Readers are encouraged to visit the linked sources for full context. Article images are represented with placeholders unless separately licensed, public domain, Creative Commons licensed, or created for this issue.
+</script>
+
+  <script type="text/markdown" id="md-issue-11"># The Reading Loop
+
+**Issue #11 — May 29, 2026**
+
+This issue is a love letter to restraint. The best classroom technology I encountered this month did one thing well and then disappeared — no dashboards demanding attention, no badges, no friction. The four pieces below all wrestle with the same question: how do we choose tools that serve the lesson instead of becoming the lesson? My summaries; the links carry the full case.
+
+## Article Navigation
+
+- #1 — The Tool That Disappears
+- #2 — Notifications Are a Curriculum
+- #3 — One Login Is a Feature
+- #4 — When "No Tech" Is the Right Tech
+
+---
+
+## #1 - The Tool That Disappears
+
+> Image: a clean visual of a single uncluttered app screen with one button.
+
+### The Big Idea
+The most effective digital tools are the ones students stop noticing. The article frames "invisibility" as a design goal: the moment a tool calls attention to itself, it's competing with the learning instead of supporting it.
+
+### Why It Matters
+Cognitive load is finite. Every menu, popup, and setting a learner has to manage is attention borrowed from the actual task.
+
+### Practical Takeaways
+- Before adopting a tool, count the clicks to the core action — fewer is better.
+- Prefer tools that work without an onboarding tour.
+- Audit one app this month for features your class never uses.
+
+**Source:** [Quiet Tools Review](https://www.example.org/tool-that-disappears)
+**Author:** Dr. Iris Calderón
+
+---
+
+## #2 - Notifications Are a Curriculum
+
+> Image: a clean visual of a phone face-down beside a stack of library books.
+
+### The Big Idea
+Every notification a platform sends teaches students what to value. The piece argues that default alerts quietly train attention toward whatever the vendor wants engaged with — not necessarily what we want learned.
+
+### Why It Matters
+Attention is the scarcest resource in any classroom. If a tool's notifications fragment it, the tool is working against you no matter how good its features are.
+
+### Practical Takeaways
+- Turn off non-essential notifications as part of setup, not as an afterthought.
+- Discuss alert design with students as a media-literacy lesson.
+- Choose tools that let *you* control the cadence of reminders.
+
+**Source:** [Attention Ledger](https://www.example.org/notifications-curriculum)
+**Author:** Bram Henley
+
+---
+
+## #3 - One Login Is a Feature
+
+> Image: a clean visual of a single key on a plain keyring.
+
+### The Big Idea
+Tool sprawl has a hidden cost: every separate account is a small barrier that compounds across a day. The article makes the unglamorous case that consolidation and single sign-on are pedagogical wins, not just IT conveniences.
+
+### Why It Matters
+Minutes lost to password resets and account-juggling are minutes not spent learning — and the friction falls hardest on the students with the least support at home.
+
+### Practical Takeaways
+- Favor tools that integrate with your existing sign-on.
+- Retire one redundant app each term to fight sprawl.
+- Track how many logins a typical lesson actually requires.
+
+**Source:** [Frictionless Schools](https://www.example.org/one-login-feature)
+**Author:** Nadia Voss
+
+---
+
+## #4 - When "No Tech" Is the Right Tech
+
+> Image: a clean visual of an index card and a pencil on a wooden desk.
+
+### The Big Idea
+The most countercultural move in this issue: sometimes the best tool is paper. The article isn't anti-technology; it's pro-fit, arguing we should reach for the lightest tool that accomplishes the goal.
+
+### Why It Matters
+Defaulting to the screen can crowd out exactly the slow, tactile thinking some lessons need. Choosing *not* to digitize is itself a design decision worth making on purpose.
+
+### Practical Takeaways
+- Ask "what would this look like with no device?" before adding one.
+- Reserve screens for tasks they uniquely enable.
+- Mix analog and digital deliberately rather than by habit.
+
+**Source:** [Right-Sized Learning](https://www.example.org/no-tech-right-tech)
+**Author:** Caleb Ofori
+
+---
+
+## Closing Reflection
+
+If there's a takeaway across these four, it's that good tool choices are mostly subtraction. Fewer clicks, fewer alerts, fewer logins, fewer screens-by-default. The work is in saying no often enough that the few tools we keep can actually disappear into the learning. This week I'm cutting one app. It won't be missed.
+
+See you in the next loop.
+
+> This newsletter provides original commentary and summaries of publicly available sources for educational and informational purposes. Readers are encouraged to visit the linked sources for full context. Article images are represented with placeholders unless separately licensed, public domain, Creative Commons licensed, or created for this issue.
+</script>
+
+  <script type="text/markdown" id="md-issue-10"># The Reading Loop
+
+**Issue #10 — May 15, 2026**
+
+A milestone issue, and fittingly it's about the one resource we keep pretending is infinite: attention. Everything I read this fortnight pushed on the idea that attention isn't something we capture from learners — it's something we help them build, protect, and direct. Four pieces below, framed in my own words; the links hold the originals.
+
+## Article Navigation
+
+- #1 — Attention Is Built, Not Grabbed
+- #2 — The Myth of Multitasking Students
+- #3 — Designing for the First Five Minutes
+- #4 — Boredom Has a Job to Do
+
+---
+
+## #1 - Attention Is Built, Not Grabbed
+
+> Image: a clean visual of a sprout breaking through soil in morning light.
+
+### The Big Idea
+We talk about "grabbing" attention as if it were a resource to seize. The article reframes it as a *capacity* learners develop over time — more like a muscle than a switch.
+
+### Why It Matters
+If attention is built, then constant novelty and stimulation may be training exactly the wrong thing: the expectation that focus should be effortless and externally supplied.
+
+### Practical Takeaways
+- Protect short stretches of single-task work and grow them gradually.
+- Name attention as a skill students can practice, not a trait they have or lack.
+- Resist the urge to add stimulation when engagement dips — try subtracting instead.
+
+**Source:** [Focus & Learning Review](https://www.example.org/attention-is-built)
+**Author:** Dr. Lena Marquez
+
+---
+
+## #2 - The Myth of Multitasking Students
+
+> Image: a clean visual of two overlapping clocks slightly out of sync.
+
+### The Big Idea
+The piece dismantles the comforting belief that today's learners are uniquely wired to multitask. What looks like parallel work is rapid, costly switching — and the cost is paid in comprehension.
+
+### Why It Matters
+Designing lessons around the assumption of seamless multitasking quietly lowers the depth of thinking we ask for. Naming the myth lets us design for focus honestly.
+
+### Practical Takeaways
+- Build "one tab" norms for tasks that need depth.
+- Show students the switching cost with a quick in-class demo.
+- Sequence tasks instead of stacking them.
+
+**Source:** [Cognition Notes](https://www.example.org/multitasking-myth)
+**Author:** Devon Achterberg
+
+---
+
+## #3 - Designing for the First Five Minutes
+
+> Image: a clean visual of an open door with light spilling into a quiet room.
+
+### The Big Idea
+The opening of a lesson sets the attentional tone for everything after it. The article argues for treating the first five minutes as a deliberate on-ramp rather than logistics-and-housekeeping time.
+
+### Why It Matters
+Attention has inertia. A scattered start is hard to recover from; a focused one carries learners through the harder middle.
+
+### Practical Takeaways
+- Open with one concrete question instead of announcements.
+- Move housekeeping to the end where it costs less focus.
+- Use a consistent ritual so the brain knows "we're starting now."
+
+**Source:** [Lesson Design Quarterly](https://www.example.org/first-five-minutes)
+**Author:** Priya Sundaram
+
+---
+
+## #4 - Boredom Has a Job to Do
+
+> Image: a clean visual of a person gazing out a rain-streaked window.
+
+### The Big Idea
+The most provocative read of the issue: boredom isn't a failure of engagement but a precursor to it. The article suggests that always-on stimulation deprives learners of the restless space where curiosity and original thinking start.
+
+### Why It Matters
+If we engineer away every dull moment, we may also engineer away the daydreaming that lets ideas connect. A little boredom is generative.
+
+### Practical Takeaways
+- Leave unstructured thinking time without rushing to fill it.
+- Reframe "I'm bored" as an invitation rather than an emergency.
+- Resist the impulse to gamify every quiet stretch.
+
+**Source:** [The Slow Classroom](https://www.example.org/boredom-has-a-job)
+**Author:** Yusuf El-Amin
+
+---
+
+## Closing Reflection
+
+Ten issues in, this is the one I'll keep coming back to. Attention isn't a prize we win from learners with brighter, faster, louder lessons — it's a capacity we either cultivate or erode with every design choice. This week I'm guarding the first five minutes and leaving a little room for boredom. Counterintuitive, maybe. Worth trying.
+
+See you in the next loop.
+
+> This newsletter provides original commentary and summaries of publicly available sources for educational and informational purposes. Readers are encouraged to visit the linked sources for full context. Article images are represented with placeholders unless separately licensed, public domain, Creative Commons licensed, or created for this issue.
+</script>
+
+  <!-- Copy bar helper -->
+  <script src="export.js"></script>
+
+  <script>
+  /* =========================================================================
+     ISSUES CONFIG
+     Newest first. Each file path is relative to this index.html.
+     To add an issue: drop a .md file in content/ and add an entry here.
+     ========================================================================= */
+  const ISSUES = [
+    { id: "issue-12", title: "Issue #12 — The Quiet Power of Feedback", date: "2026-06-12", file: "content/issue-12.md" },
+    { id: "issue-11", title: "Issue #11 — Tools That Get Out of the Way", date: "2026-05-29", file: "content/issue-11.md" },
+    { id: "issue-10", title: "Issue #10 — Attention, On Purpose",        date: "2026-05-15", file: "content/issue-10.md" }
+  ];
+
+  /* ---------- state ---------- */
+  // Raw Markdown source of the issue currently on screen. The export Copy bar
+  // reads this live, so switching issues automatically changes what gets copied.
+  let currentMarkdown = "";
+  let exportBarMounted = false;
+
+  /* ---------- helpers ---------- */
+  const $ = (sel) => document.querySelector(sel);
+  const contentEl = $("#content");
+  const issueListEl = $("#issueList");
+  const tocListEl = $("#tocList");
+
+  // Sort newest first defensively.
+  const sortedIssues = [...ISSUES].sort((a, b) => (a.date < b.date ? 1 : -1));
+
+  function fmtDate(iso){
+    const d = new Date(iso + "T00:00:00");
+    if (isNaN(d)) return iso;
+    return d.toLocaleDateString(undefined, { year:"numeric", month:"long", day:"numeric" });
+  }
+
+  function slugify(text){
+    return text.toLowerCase().trim()
+      .replace(/[^\w\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-");
+  }
+
+  function renderMarkdown(md){
+    let html = marked.parse(md, { gfm:true, breaks:false });
+    if (window.DOMPurify) html = DOMPurify.sanitize(html);
+    return html;
+  }
+
+  /* ---------- issue index ---------- */
+  function buildIssueList(activeId){
+    issueListEl.innerHTML = "";
+    sortedIssues.forEach((iss) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.className = "issue-link" + (iss.id === activeId ? " active" : "");
+      a.href = "?issue=" + encodeURIComponent(iss.id);
+      a.innerHTML =
+        '<span class="it-title">' + iss.title + '</span>' +
+        '<span class="it-date">' + fmtDate(iss.date) + '</span>';
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        loadIssue(iss.id, true);
+      });
+      li.appendChild(a);
+      issueListEl.appendChild(li);
+    });
+  }
+
+  /* ---------- table of contents ---------- */
+  function buildTOC(){
+    const headings = contentEl.querySelectorAll(".md h2, .md h3");
+    tocListEl.innerHTML = "";
+    if (!headings.length){
+      tocListEl.innerHTML = '<li class="toc-empty">No sections in this issue.</li>';
+      return;
+    }
+    const used = {};
+    headings.forEach((h) => {
+      let id = slugify(h.textContent);
+      if (used[id] != null){ used[id]++; id = id + "-" + used[id]; } else { used[id] = 0; }
+      h.id = id;
+
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#" + id;
+      a.textContent = h.textContent;
+      a.className = h.tagName.toLowerCase() === "h3" ? "lvl-3" : "lvl-2";
+      a.addEventListener("click", (e) => {
+        e.preventDefault();
+        h.scrollIntoView({ behavior:"smooth", block:"start" });
+        history.replaceState(null, "", "#" + id);
+      });
+      li.appendChild(a);
+      tocListEl.appendChild(li);
+    });
+  }
+
+  /* ---------- copy bar ---------- */
+  // Mount the Export "Copy bar" exactly once. Its getters read the live
+  // currentMarkdown variable, so they always reflect the on-screen issue.
+  function mountExportBar(){
+    if (exportBarMounted || !window.ExportBar) return;
+    exportBarMounted = true;
+    ExportBar.mount({
+      mount: "#exportbar",
+      label: "issue",
+      getMarkdown: () => currentMarkdown,
+      // Clean semantic article HTML only — no TOC/sidebar/chrome.
+      getHtml: () => {
+        let html = marked.parse(currentMarkdown, { gfm:true, breaks:false });
+        if (window.DOMPurify) html = DOMPurify.sanitize(html);
+        return html;
+      }
+    });
+  }
+
+  /* ---------- load + render an issue ---------- */
+  async function loadIssue(id, pushUrl){
+    const iss = sortedIssues.find((x) => x.id === id) || sortedIssues[0];
+    if (!iss) return;
+
+    buildIssueList(iss.id);
+
+    if (pushUrl){
+      const url = "?issue=" + encodeURIComponent(iss.id);
+      history.pushState({ id: iss.id }, "", url);
+    }
+    document.title = iss.title + " — The Reading Loop";
+
+    contentEl.innerHTML = '<div class="state"><div class="spinner"></div>Loading “' + iss.title + '”…</div>';
+    tocListEl.innerHTML = '<li class="toc-empty">Loading…</li>';
+
+    // Read the embedded fallback block, if one exists for this issue.
+    // (Used when fetch() is blocked — e.g. when you double-click this page.)
+    function embeddedMarkdown(){
+      const el = document.getElementById("md-" + iss.id);
+      return el ? el.textContent : null;
+    }
+
+    let md = null;
+
+    // 1) Try fetching the real .md file (works over http:// and on GitHub Pages).
+    try{
+      const res = await fetch(iss.file, { cache: "no-cache" });
+      if (!res.ok) throw new Error("HTTP " + res.status + " for " + iss.file);
+      md = await res.text();
+    } catch (err){
+      // 2) fetch() failed (most often the file:// double-click case).
+      //    Fall back to the markdown embedded in this page.
+      md = embeddedMarkdown();
+    }
+
+    if (md != null){
+      currentMarkdown = md;            // remember the source for the Copy bar
+      contentEl.innerHTML = '<div class="md">' + renderMarkdown(md) + '</div>';
+      buildTOC();
+      mountExportBar();                // mount once, after the first issue renders
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    // 3) Nothing worked: no file reachable AND no embedded block to fall back to.
+    contentEl.innerHTML =
+      '<div class="state error">' +
+        '<h2>Could not load this issue</h2>' +
+        '<p>Tried to load <code>' + iss.file + '</code> and could not find a matching ' +
+        'embedded block (<code>#md-' + iss.id + '</code>).</p>' +
+        '<p>Check that the <code>ISSUES</code> id matches the file, or run a tiny local ' +
+        'server from this folder:</p>' +
+        '<p><code>python3 -m http.server 8000</code> then open <code>http://localhost:8000</code></p>' +
+      '</div>';
+    tocListEl.innerHTML = '<li class="toc-empty">Unavailable.</li>';
+  }
+
+  /* ---------- routing ---------- */
+  function currentIssueId(){
+    const params = new URLSearchParams(location.search);
+    const fromQuery = params.get("issue");
+    if (fromQuery) return fromQuery;
+    const fromHash = location.hash.replace(/^#/, "");
+    if (fromHash && sortedIssues.some((i) => i.id === fromHash)) return fromHash;
+    return sortedIssues[0] && sortedIssues[0].id;
+  }
+
+  window.addEventListener("popstate", () => {
+    loadIssue(currentIssueId(), false);
+  });
+
+  // boot
+  loadIssue(currentIssueId(), false);
+  </script>
+</body>
+</html>

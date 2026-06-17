@@ -1,0 +1,32 @@
+{
+  "kpis": [
+    { "metric": "Active Members", "value": 4820, "target": 5000, "unit": "", "period": "This month", "trend": "up", "category": "Membership", "notes": "Steady growth from spring campaign." },
+    { "metric": "Course Completions", "value": 1340, "target": 1200, "unit": "", "period": "This month", "trend": "up", "category": "Learning", "notes": "Above target." },
+    { "metric": "Net Promoter Score", "value": 62, "target": 60, "unit": "", "period": "Q2", "trend": "up", "category": "Satisfaction", "notes": "" },
+    { "metric": "Events Held", "value": 18, "target": 24, "unit": "", "period": "This quarter", "trend": "down", "category": "Engagement", "notes": "Two events postponed." },
+    { "metric": "Support Tickets Resolved", "value": 96, "target": 95, "unit": "%", "period": "This month", "trend": "up", "category": "Operations", "notes": "" },
+    { "metric": "Avg. Satisfaction", "value": 4.6, "target": 4.5, "unit": "/5", "period": "This month", "trend": "up", "category": "Satisfaction", "notes": "" }
+  ],
+  "trend": [
+    { "Period": "Jan", "Metric": "Active Members", "Value": 4100 },
+    { "Period": "Feb", "Metric": "Active Members", "Value": 4250 },
+    { "Period": "Mar", "Metric": "Active Members", "Value": 4380 },
+    { "Period": "Apr", "Metric": "Active Members", "Value": 4510 },
+    { "Period": "May", "Metric": "Active Members", "Value": 4690 },
+    { "Period": "Jun", "Metric": "Active Members", "Value": 4820 },
+    { "Period": "Jan", "Metric": "Course Completions", "Value": 880 },
+    { "Period": "Feb", "Metric": "Course Completions", "Value": 940 },
+    { "Period": "Mar", "Metric": "Course Completions", "Value": 1010 },
+    { "Period": "Apr", "Metric": "Course Completions", "Value": 1150 },
+    { "Period": "May", "Metric": "Course Completions", "Value": 1265 },
+    { "Period": "Jun", "Metric": "Course Completions", "Value": 1340 }
+  ],
+  "details": [
+    { "Region": "North", "Members": 1320, "Completions": 410, "Satisfaction": 4.7 },
+    { "Region": "South", "Members": 1180, "Completions": 360, "Satisfaction": 4.5 },
+    { "Region": "East", "Members": 1090, "Completions": 300, "Satisfaction": 4.6 },
+    { "Region": "West", "Members": 1230, "Completions": 270, "Satisfaction": 4.4 },
+    { "Region": "Online", "Members": 0, "Completions": 0, "Satisfaction": 0 }
+  ],
+  "meta": { "updated": "2026-06-16T12:00:00.000Z" }
+}

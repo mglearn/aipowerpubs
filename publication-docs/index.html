@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Field Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#002855; --navy-900:#001a3d; --navy-700:#003b7a;
+  --gold:#FFB81C; --gold-600:#d99a00;
+  --ink:#1a2230; --muted:#5a6577; --bg:#f4f6fa; --card:#ffffff; --border:#e2e8f0;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Source Sans 3',system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+  line-height:1.5;
+}
+a{color:inherit;}
+
+/* Masthead */
+.masthead{
+  background:var(--navy);
+  color:#fff;
+  border-bottom:6px solid var(--gold);
+  padding:56px 24px 48px;
+  text-align:center;
+}
+.issue-label{
+  display:inline-block;
+  font-size:.78rem;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  font-weight:700;
+  color:var(--navy);
+  background:var(--gold);
+  padding:5px 14px;
+  border-radius:999px;
+  margin-bottom:18px;
+}
+.masthead h1{
+  font-family:'Merriweather',Georgia,serif;
+  font-weight:900;
+  font-size:clamp(2.4rem,6vw,4rem);
+  margin:0 0 10px;
+  letter-spacing:-.01em;
+}
+.masthead .tagline{
+  margin:0 auto;
+  max-width:640px;
+  font-size:1.1rem;
+  color:#cdd9 ;
+  color:#c9d6e8;
+  font-style:italic;
+  font-family:'Merriweather',Georgia,serif;
+}
+
+/* Layout */
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px;}
+.section-rule{
+  display:flex;align-items:center;gap:14px;
+  margin:44px 0 22px;
+}
+.section-rule h2{
+  font-family:'Source Sans 3',sans-serif;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.85rem;
+  font-weight:700;
+  color:var(--muted);
+  margin:0;
+}
+.section-rule::after{
+  content:"";flex:1;height:2px;background:var(--border);
+}
+
+/* Category tag */
+.tag{
+  display:inline-block;
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--navy);
+  background:var(--gold);
+  padding:4px 10px;
+  border-radius:999px;
+}
+
+/* Featured card */
+.featured{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,40,85,.08);
+  display:grid;
+  grid-template-columns:1.1fr 1fr;
+  margin-top:30px;
+  transition:transform .18s ease, box-shadow .18s ease;
+}
+.featured:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,40,85,.14);}
+.featured .feat-art{
+  background:linear-gradient(135deg,var(--navy-700),var(--navy-900));
+  color:#fff;
+  min-height:260px;
+  display:flex;
+  align-items:flex-end;
+  padding:26px;
+}
+.featured .feat-art .badge{
+  font-family:'Merriweather',serif;
+  font-style:italic;
+  font-size:1.05rem;
+  color:var(--gold);
+}
+.featured .feat-body{padding:30px 32px;}
+.featured h3{
+  font-family:'Merriweather',Georgia,serif;
+  font-weight:900;
+  font-size:1.7rem;
+  line-height:1.2;
+  margin:14px 0 12px;
+  color:var(--navy);
+}
+.featured .byline,.card .byline{
+  font-size:.86rem;color:var(--muted);margin:0 0 12px;
+}
+.featured .excerpt{font-size:1.02rem;color:var(--ink);margin:0 0 20px;}
+.read-link{
+  display:inline-flex;align-items:center;gap:6px;
+  font-weight:700;color:var(--navy);text-decoration:none;
+  border-bottom:2px solid var(--gold);padding-bottom:2px;
+}
+.read-link:hover{color:var(--gold-600);}
+
+/* Grid of cards */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:22px;
+  margin-bottom:30px;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:22px 22px 24px;
+  box-shadow:0 4px 16px rgba(0,40,85,.05);
+  transition:transform .18s ease, box-shadow .18s ease;
+  display:flex;flex-direction:column;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,40,85,.12);}
+.card h3{
+  font-family:'Merriweather',Georgia,serif;
+  font-weight:700;
+  font-size:1.22rem;
+  line-height:1.25;
+  margin:13px 0 10px;
+  color:var(--navy);
+}
+.card .excerpt{font-size:.95rem;color:var(--muted);margin:0 0 18px;flex:1;}
+.card .meta-row{display:flex;justify-content:space-between;align-items:center;}
+.card .date{font-size:.8rem;color:var(--muted);}
+
+/* States */
+.state{
+  text-align:center;padding:70px 24px;color:var(--muted);
+  font-size:1.05rem;
+}
+.state.error{color:#b3261e;}
+.spinner{
+  width:34px;height:34px;border:3px solid var(--border);
+  border-top-color:var(--navy);border-radius:50%;
+  animation:spin .8s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Footer */
+.site-footer{
+  background:var(--navy);
+  color:#fff;
+  margin-top:60px;
+  padding:34px 24px;
+  text-align:center;
+  border-top:5px solid var(--gold);
+}
+.footer-inner{max-width:720px;margin:0 auto;}
+.site-footer p{margin:6px 0;font-size:.92rem;}
+.site-footer a{color:var(--gold);text-decoration:none;}
+.site-footer a:hover{text-decoration:underline;}
+.site-footer .cc-line{font-weight:700;}
+.site-footer .contact-line{color:#c9d6e8;}
+
+@media(max-width:720px){
+  .featured{grid-template-columns:1fr;}
+  .featured .feat-art{min-height:150px;}
+}
+</style>
+</head>
+<body>
+<header class="masthead">
+  <span class="issue-label" id="issueLabel">Loading</span>
+  <h1 id="pubTitle">Field Notes</h1>
+  <p class="tagline" id="pubTagline">Practical ideas for educators and teams</p>
+</header>
+
+<main class="wrap">
+  <div id="exportbar"></div>
+  <div id="content"></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="cc-line"><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> &middot; Miguel Guhlin</p>
+    <p class="contact-line">
+      <a href="mailto:mguhlin@tcea.org">mguhlin@tcea.org</a> &middot;
+      <a href="https://mguhlin.org" target="_blank" rel="noopener">mguhlin.org</a> &middot;
+      <a href="https://go.mgpd.org/lftx2606" target="_blank" rel="noopener">go.mgpd.org/lftx2606</a>
+    </p>
+  </div>
+</footer>
+
+<!-- ===== EMBEDDED DEMO DATA =======================================
+     This is an exact copy of sample-data.json. It lets the demo work
+     when you simply DOUBLE-CLICK this file (browsers block fetching
+     local files over file://). When served over http, the script
+     fetches sample-data.json instead. Do not edit this by hand —
+     keep it in sync with sample-data.json.
+================================================================= -->
+<script type="application/json" id="demo-data">
+{
+  "meta": {
+    "title": "Field Notes",
+    "tagline": "Practical ideas for educators and teams who do the work",
+    "issue": "Vol. 3, Issue 2"
+  },
+  "articles": [
+    {
+      "id": "small-bets-big-learning",
+      "slug": "small-bets-big-learning",
+      "title": "Small Bets, Big Learning: Designing Pilots That Actually Stick",
+      "category": "Strategy",
+      "byline": "Dana Okafor",
+      "date": "2026-05-28",
+      "excerpt": "Most initiatives die in the gap between a bold plan and a busy Tuesday. Here is a lighter way to test ideas before you commit the whole team.",
+      "featured": true,
+      "readingMinutes": 6,
+      "bodyHtml": "<p>Every team has a graveyard of good intentions: the framework that was rolled out in August and quietly abandoned by October, the platform nobody logs into, the strategy deck that lives only in a shared drive. The problem is rarely the idea. The problem is the distance between a bold plan and a busy Tuesday.</p><h2>Start with a question, not a solution</h2><p>A pilot is not a smaller version of a launch. It is an experiment designed to answer a specific question. Before you choose a tool or a method, write down the one thing you genuinely do not know yet.</p><blockquote>If you already know the answer, you are not running a pilot. You are running a rehearsal.</blockquote><h3>Good pilot questions sound like this</h3><ul><li>Will teachers use this without a mandate?</li><li>Does this save time, or just move the work somewhere else?</li><li>What breaks when we get to twenty users instead of two?</li></ul><div class=\"img-ph\">Image: A whiteboard sketch showing a single question circled in the center of a messy plan.</div><h2>Keep the bet small enough to lose</h2><p>The point of a small bet is that you can walk away from it without political cost. Pick a friendly group, set a fixed end date, and tell everyone up front that stopping is a valid outcome. When people know an experiment is allowed to fail, they tell you the truth about it.</p><h3>Three constraints that keep pilots honest</h3><ul><li><strong>Time:</strong> four to six weeks, never open-ended.</li><li><strong>Scope:</strong> one team, one workflow, one question.</li><li><strong>Exit:</strong> a written definition of what would make you stop.</li></ul><h2>Decide before you start what success looks like</h2><p>Vague pilots produce vague results, and vague results get interpreted by whoever has the most enthusiasm. Agree on a simple signal in advance, even an imperfect one. A short weekly check-in beats a sophisticated dashboard nobody reads.</p><p>When the bet pays off, you scale with evidence instead of optimism. When it does not, you have spent a few weeks instead of a few quarters, and you have a story your team will actually believe.</p>"
+    },
+    {
+      "id": "feedback-that-travels",
+      "slug": "feedback-that-travels",
+      "title": "Feedback That Travels: Notes People Can Use Tomorrow",
+      "category": "Coaching",
+      "byline": "Marcus Lin",
+      "date": "2026-05-14",
+      "excerpt": "Helpful feedback is not about being nicer or harsher. It is about being usable. A few small shifts make notes that move from the page into practice.",
+      "featured": false,
+      "readingMinutes": 5,
+      "bodyHtml": "<p>We tend to argue about feedback in the wrong terms. The debate is usually about tone, soft or direct, generous or blunt. But the feedback that changes behavior has less to do with tone and more to do with whether the person can act on it before they forget it.</p><h2>Name the moment, not the person</h2><p>Compare two notes. One says, \"You need to be more organized.\" The other says, \"In the third segment, the group lost the thread when two instructions arrived at once.\" The second is not softer. It is more useful, because it points at a moment that can be changed.</p><blockquote>People cannot edit a character trait. They can edit a Tuesday.</blockquote><h3>A simple structure that travels</h3><ul><li><strong>Where:</strong> the specific moment you observed.</li><li><strong>What:</strong> what happened, described plainly.</li><li><strong>Next:</strong> one concrete thing to try next time.</li></ul><div class=\"img-ph\">Image: A sticky note with three short lines, labeled Where, What, and Next.</div><h2>One note beats ten</h2><p>The instinct to be thorough often backfires. A page of observations becomes a wall the recipient cannot climb. Choose the single change that would matter most and lead with it. The rest can wait for the next conversation.</p><h2>End with a handoff, not a verdict</h2><p>Close by naming what you will look for next time. This turns feedback from a judgment into a shared project, and it makes the follow-up feel inevitable rather than punitive. The goal is not to be right about the past. It is to be useful about the future.</p>"
+    },
+    {
+      "id": "meetings-worth-the-room",
+      "slug": "meetings-worth-the-room",
+      "title": "Meetings Worth the Room: A Field Guide to Spending Time Well",
+      "category": "Teams",
+      "byline": "Priya Raman",
+      "date": "2026-04-30",
+      "excerpt": "A meeting is the most expensive tool most teams own and the one we plan the least. Here is how to make the calendar earn its keep.",
+      "featured": false,
+      "readingMinutes": 5,
+      "bodyHtml": "<p>Add up the salaries in the room for one hour and you have the true cost of a recurring meeting. We would never approve a purchase that size without a justification, yet standing meetings renew themselves automatically, year after year, long after their reason has faded.</p><h2>Ask what the meeting is for</h2><p>Most meetings quietly try to do three incompatible jobs at once: share information, make a decision, and build relationships. Each needs a different shape. Information can often be a written update. Decisions need the right people and a clear owner. Connection needs space, not an agenda.</p><h3>Match the format to the purpose</h3><ul><li><strong>To inform:</strong> consider a document people read before, not a presentation they sit through.</li><li><strong>To decide:</strong> state the decision and the deadline at the top.</li><li><strong>To connect:</strong> protect unstructured time and resist the urge to fill it.</li></ul><blockquote>If the only outcome of a meeting is scheduling the next meeting, it was an email wearing a costume.</blockquote><div class=\"img-ph\">Image: A weekly calendar with several recurring blocks crossed out in red.</div><h2>Default to ending early</h2><p>Work expands to fill the time allotted, so allot less. A meeting scheduled for thirty minutes that finishes in twenty returns time to everyone and signals respect. Make leaving early a sign of a good meeting, not an awkward one.</p><h2>Audit the standing slots</h2><p>Once a quarter, cancel every recurring meeting and only bring back the ones people actively ask for. The silence around the ones nobody missed is the most honest data you will get all year.</p>"
+    },
+    {
+      "id": "documentation-people-read",
+      "slug": "documentation-people-read",
+      "title": "Documentation People Actually Read",
+      "category": "Practice",
+      "byline": "Sofia Alvarez",
+      "date": "2026-04-16",
+      "excerpt": "The best documentation is not the most complete. It is the kind a tired person can follow at 4 p.m. on a Friday. Write for that reader.",
+      "featured": false,
+      "readingMinutes": 4,
+      "bodyHtml": "<p>There is a particular kind of pride in a thorough document, and a particular kind of disappointment when you discover no one has read it. Completeness and usefulness are not the same thing. The most-read pages in any organization are short, specific, and forgiving of the reader's hurry.</p><h2>Write for the tired reader</h2><p>Picture the person who will actually open this page: late in the day, mid-task, slightly stressed, looking for one answer. Every choice you make should serve that reader. Lead with what they came for. Save the background for those who scroll.</p><blockquote>Nobody reads documentation for pleasure. They read it to get unstuck.</blockquote><h3>Habits that help</h3><ul><li>Put the answer first and the explanation second.</li><li>Use real examples, not abstract placeholders.</li><li>Date the page so readers know if it is stale.</li></ul><div class=\"img-ph\">Image: A single screen showing a short how-to with the key step highlighted.</div><h2>Let it rot gracefully</h2><p>All documentation decays. Rather than pretending otherwise, design for it. A visible last-updated date and a single owner per page do more for trust than any style guide. When readers can see how fresh a page is, they can judge it for themselves, and they will forgive the gaps.</p>"
+    }
+  ]
+}
+</script>
+
+<script src="export.js"></script>
+<script>
+/* ===== CONFIG ===================================================
+   Paste your Apps Script Web App /exec URL between the quotes.
+   Leave empty to use the bundled offline demo.
+================================================================= */
+const WEB_APP_URL = "";
+
+const content = document.getElementById("content");
+
+/* Read the embedded demo data (used when fetch is blocked, e.g. file://). */
+function embeddedData(){
+  return JSON.parse(document.getElementById("demo-data").textContent);
+}
+
+function esc(s){
+  return String(s == null ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+function fmtDate(d){
+  if(!d) return "";
+  const dt = new Date(d);
+  if(isNaN(dt)) return esc(d);
+  return dt.toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"});
+}
+
+function showLoading(){
+  content.innerHTML = '<div class="state"><div class="spinner"></div>Loading the latest issue&hellip;</div>';
+}
+function showError(msg){
+  content.innerHTML = '<div class="state error"><p>Sorry, we could not load this issue.</p><p style="font-size:.9rem">'+esc(msg)+'</p></div>';
+}
+
+function cardHtml(a){
+  const url = "article.html?id=" + encodeURIComponent(a.slug || a.id);
+  return ''
+    + '<article class="card">'
+    +   '<a href="'+url+'" style="text-decoration:none;display:flex;flex-direction:column;flex:1">'
+    +     '<span class="tag">'+esc(a.category||"Article")+'</span>'
+    +     '<h3>'+esc(a.title)+'</h3>'
+    +     '<p class="byline">By '+esc(a.byline||"Staff")+'</p>'
+    +     '<p class="excerpt">'+esc(a.excerpt||"")+'</p>'
+    +     '<div class="meta-row">'
+    +       '<span class="date">'+fmtDate(a.date)+'</span>'
+    +       '<span class="read-link">Read &rarr;</span>'
+    +     '</div>'
+    +   '</a>'
+    + '</article>';
+}
+
+function featuredHtml(a){
+  const url = "article.html?id=" + encodeURIComponent(a.slug || a.id);
+  return ''
+    + '<a class="featured" href="'+url+'" style="text-decoration:none">'
+    +   '<div class="feat-art"><span class="badge">Lead story &middot; '+esc(a.category||"Feature")+'</span></div>'
+    +   '<div class="feat-body">'
+    +     '<span class="tag">'+esc(a.category||"Feature")+'</span>'
+    +     '<h3>'+esc(a.title)+'</h3>'
+    +     '<p class="byline">By '+esc(a.byline||"Staff")+' &middot; '+fmtDate(a.date)
+    +        (a.readingMinutes?(' &middot; '+esc(a.readingMinutes)+' min read'):'')+'</p>'
+    +     '<p class="excerpt">'+esc(a.excerpt||"")+'</p>'
+    +     '<span class="read-link">Read the lead story &rarr;</span>'
+    +   '</div>'
+    + '</a>';
+}
+
+function render(data){
+  const meta = data.meta || {};
+  document.title = (meta.title || "Field Notes");
+  document.getElementById("pubTitle").textContent = meta.title || "Field Notes";
+  document.getElementById("pubTagline").textContent = meta.tagline || "";
+  document.getElementById("issueLabel").textContent = meta.issue || "Current Issue";
+
+  const articles = Array.isArray(data.articles) ? data.articles.slice() : [];
+  if(!articles.length){
+    content.innerHTML = '<div class="state">No articles in this issue yet.</div>';
+    return;
+  }
+
+  let lead = articles.find(a => a.featured);
+  let rest;
+  if(lead){
+    rest = articles.filter(a => a !== lead);
+  }else{
+    lead = articles[0];
+    rest = articles.slice(1);
+  }
+
+  let html = featuredHtml(lead);
+  if(rest.length){
+    html += '<div class="section-rule"><h2>More from this issue</h2></div>';
+    html += '<div class="grid">' + rest.map(cardHtml).join("") + '</div>';
+  }
+  content.innerHTML = html;
+  mountExportBar(data);
+}
+
+/* Convert the HTML this project emits into Markdown. Walks nodes with DOMParser;
+   unknown tags simply contribute their text. */
+function htmlToMarkdown(html){
+  const doc = new DOMParser().parseFromString('<div id="__md">'+(html||"")+'</div>', "text/html");
+  const root = doc.getElementById("__md");
+
+  function inline(node){
+    let out = "";
+    node.childNodes.forEach(function(n){
+      if(n.nodeType === 3){ out += n.nodeValue; return; }
+      if(n.nodeType !== 1){ return; }
+      const tag = n.tagName.toLowerCase();
+      if(tag === "strong" || tag === "b"){ out += "**" + inline(n) + "**"; }
+      else if(tag === "em" || tag === "i"){ out += "*" + inline(n) + "*"; }
+      else if(tag === "a"){ out += "[" + inline(n) + "](" + (n.getAttribute("href")||"") + ")"; }
+      else if(tag === "br"){ out += "\n"; }
+      else { out += inline(n); }
+    });
+    return out;
+  }
+
+  function clean(s){ return s.replace(/[ \t]+/g," ").replace(/\s+\n/g,"\n").trim(); }
+
+  const blocks = [];
+  root.childNodes.forEach(function(n){
+    if(n.nodeType === 3){
+      const t = clean(n.nodeValue);
+      if(t) blocks.push(t);
+      return;
+    }
+    if(n.nodeType !== 1){ return; }
+    const tag = n.tagName.toLowerCase();
+    if(tag === "h2"){ blocks.push("## " + clean(inline(n))); }
+    else if(tag === "h3"){ blocks.push("### " + clean(inline(n))); }
+    else if(tag === "h4"){ blocks.push("#### " + clean(inline(n))); }
+    else if(tag === "h1"){ blocks.push("# " + clean(inline(n))); }
+    else if(tag === "p"){ blocks.push(clean(inline(n))); }
+    else if(tag === "blockquote"){
+      const inner = clean(inline(n));
+      blocks.push(inner.split("\n").map(function(l){ return "> " + l; }).join("\n"));
+    }
+    else if(tag === "ul"){
+      const items = [];
+      n.querySelectorAll(":scope > li").forEach(function(li){ items.push("- " + clean(inline(li))); });
+      blocks.push(items.join("\n"));
+    }
+    else if(tag === "ol"){
+      const items = [];
+      let i = 1;
+      n.querySelectorAll(":scope > li").forEach(function(li){ items.push((i++) + ". " + clean(inline(li))); });
+      blocks.push(items.join("\n"));
+    }
+    else if(tag === "div" && n.classList.contains("img-ph")){
+      const txt = clean(inline(n));
+      blocks.push(txt ? "> Image: " + txt : "![Image](placeholder)");
+    }
+    else if(tag === "hr"){ blocks.push("---"); }
+    else {
+      const t = clean(inline(n));
+      if(t) blocks.push(t);
+    }
+  });
+  return blocks.join("\n\n").trim() + "\n";
+}
+
+/* Mount the copy bar for the whole issue. */
+function mountExportBar(data){
+  if(!window.ExportBar) return;
+  const meta = data.meta || {};
+  const articles = Array.isArray(data.articles) ? data.articles : [];
+  const issueLine = [meta.tagline, meta.issue].filter(Boolean).join(" · ");
+
+  ExportBar.mount({
+    mount: "#exportbar",
+    label: "issue",
+    getHtml: function(){
+      let h = '<h1>'+esc(meta.title||"Field Notes")+'</h1>';
+      if(issueLine) h += '<p><em>'+esc(issueLine)+'</em></p>';
+      articles.forEach(function(a){
+        h += '<hr>'
+          + '<h2>'+esc(a.title)+'</h2>'
+          + '<p><em>'+esc(a.category||"Article")+' · By '+esc(a.byline||"Staff")+' · '+fmtDate(a.date)+'</em></p>'
+          + (a.bodyHtml||"");
+      });
+      return h;
+    },
+    getMarkdown: function(){
+      let md = '# '+(meta.title||"Field Notes")+'\n\n';
+      if(issueLine) md += '*'+issueLine+'*\n\n';
+      articles.forEach(function(a){
+        md += '## '+(a.title||"")+'\n\n'
+          + '*'+(a.category||"Article")+' · By '+(a.byline||"Staff")+' · '+fmtDate(a.date)+'*\n\n'
+          + htmlToMarkdown(a.bodyHtml||"") + '\n';
+      });
+      return md.trim() + "\n";
+    }
+  });
+}
+
+async function load(){
+  showLoading();
+  /* 1) Live backend if a Web App URL is configured. */
+  if(WEB_APP_URL){
+    try{
+      const res = await fetch(WEB_APP_URL, {cache:"no-store"});
+      if(!res.ok) throw new Error("HTTP "+res.status);
+      render(await res.json());
+      return;
+    }catch(err){
+      showError(err.message || String(err));
+      return;
+    }
+  }
+  /* 2) No backend: try the sample-data.json file (works over http). */
+  try{
+    const res = await fetch("./sample-data.json", {cache:"no-store"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    render(await res.json());
+    return;
+  }catch(err){
+    /* 3) fetch blocked (the file:// double-click case): use embedded data. */
+    try{
+      render(embeddedData());
+    }catch(e2){
+      showError(e2.message || String(e2));
+    }
+  }
+}
+load();
+</script>
+</body>
+</html>

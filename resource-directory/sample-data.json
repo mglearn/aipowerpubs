@@ -1,0 +1,189 @@
+{
+  "resources": [
+    {
+      "title": "Markdown Cheat Sheet",
+      "url": "https://example.org/markdown-cheatsheet",
+      "category": "Guides",
+      "tags": ["writing", "reference", "formatting"],
+      "description": "A one-page reference covering headings, lists, links, tables, and code blocks in Markdown.",
+      "level": "Beginner",
+      "rating": 4.6,
+      "featured": true,
+      "added": "2026-05-28"
+    },
+    {
+      "title": "Open Source Diagram Maker",
+      "url": "https://example.org/diagram-maker",
+      "category": "Tools",
+      "tags": ["diagrams", "visuals", "free"],
+      "description": "Browser-based tool for flowcharts, mind maps, and network diagrams with export to PNG and SVG.",
+      "level": "Beginner",
+      "rating": 4.8,
+      "featured": true,
+      "added": "2026-06-02"
+    },
+    {
+      "title": "Intro to Data Analysis",
+      "url": "https://example.org/data-analysis-course",
+      "category": "Courses",
+      "tags": ["data", "spreadsheets", "analytics"],
+      "description": "A self-paced course teaching the fundamentals of cleaning, summarizing, and charting data.",
+      "level": "Intermediate",
+      "rating": 4.4,
+      "featured": false,
+      "added": "2026-04-15"
+    },
+    {
+      "title": "Lesson Plan Template Pack",
+      "url": "https://example.org/lesson-plan-templates",
+      "category": "Templates",
+      "tags": ["teaching", "planning", "printable"],
+      "description": "A bundle of editable lesson plan templates for daily, weekly, and unit planning.",
+      "level": "Beginner",
+      "rating": 4.2,
+      "featured": false,
+      "added": "2026-03-22"
+    },
+    {
+      "title": "Educators Discussion Forum",
+      "url": "https://example.org/educators-forum",
+      "category": "Communities",
+      "tags": ["teaching", "networking", "support"],
+      "description": "An active community where educators share strategies, ask questions, and trade resources.",
+      "level": "Beginner",
+      "rating": 4.5,
+      "featured": false,
+      "added": "2026-05-10"
+    },
+    {
+      "title": "Color Palette Generator",
+      "url": "https://example.org/color-palette",
+      "category": "Tools",
+      "tags": ["design", "visuals", "accessibility"],
+      "description": "Generate accessible, high-contrast color palettes for slides, sites, and print materials.",
+      "level": "Beginner",
+      "rating": 4.7,
+      "featured": true,
+      "added": "2026-06-08"
+    },
+    {
+      "title": "Advanced Spreadsheet Formulas",
+      "url": "https://example.org/spreadsheet-formulas",
+      "category": "Guides",
+      "tags": ["spreadsheets", "data", "reference"],
+      "description": "A deep dive into lookup, array, and conditional formulas with worked examples.",
+      "level": "Advanced",
+      "rating": 4.3,
+      "featured": false,
+      "added": "2026-02-18"
+    },
+    {
+      "title": "Project Planning Course",
+      "url": "https://example.org/project-planning",
+      "category": "Courses",
+      "tags": ["planning", "management", "productivity"],
+      "description": "Learn to scope, schedule, and track projects from kickoff through delivery.",
+      "level": "Intermediate",
+      "rating": 4.1,
+      "featured": false,
+      "added": "2026-01-30"
+    },
+    {
+      "title": "Newsletter Template Set",
+      "url": "https://example.org/newsletter-templates",
+      "category": "Templates",
+      "tags": ["communication", "printable", "design"],
+      "description": "Ready-to-use newsletter layouts for classrooms, teams, and organizations.",
+      "level": "Beginner",
+      "rating": 4.0,
+      "featured": false,
+      "added": "2026-04-04"
+    },
+    {
+      "title": "Accessibility Checklist",
+      "url": "https://example.org/accessibility-checklist",
+      "category": "Guides",
+      "tags": ["accessibility", "reference", "inclusion"],
+      "description": "A practical checklist for making documents, slides, and websites accessible to everyone.",
+      "level": "Intermediate",
+      "rating": 4.9,
+      "featured": true,
+      "added": "2026-06-12"
+    },
+    {
+      "title": "Screen Recording App",
+      "url": "https://example.org/screen-recorder",
+      "category": "Tools",
+      "tags": ["video", "free", "productivity"],
+      "description": "Lightweight app for recording your screen with audio, ideal for tutorials and demos.",
+      "level": "Beginner",
+      "rating": 4.4,
+      "featured": false,
+      "added": "2026-05-19"
+    },
+    {
+      "title": "Online Learning Network",
+      "url": "https://example.org/learning-network",
+      "category": "Communities",
+      "tags": ["networking", "professional-development", "support"],
+      "description": "A network of professionals sharing courses, mentorship, and career resources.",
+      "level": "Intermediate",
+      "rating": 4.3,
+      "featured": false,
+      "added": "2026-03-11"
+    },
+    {
+      "title": "Web Development Bootcamp",
+      "url": "https://example.org/webdev-bootcamp",
+      "category": "Courses",
+      "tags": ["coding", "web", "productivity"],
+      "description": "A hands-on bootcamp covering HTML, CSS, and JavaScript through real projects.",
+      "level": "Advanced",
+      "rating": 4.6,
+      "featured": true,
+      "added": "2026-06-14"
+    },
+    {
+      "title": "Citation Style Guide",
+      "url": "https://example.org/citation-guide",
+      "category": "Guides",
+      "tags": ["writing", "reference", "research"],
+      "description": "Quick guidance on common citation styles with formatted examples for each.",
+      "level": "Beginner",
+      "rating": 4.2,
+      "featured": false,
+      "added": "2026-02-27"
+    }
+  ],
+  "categories": ["Communities", "Courses", "Guides", "Templates", "Tools"],
+  "tags": [
+    "accessibility",
+    "analytics",
+    "coding",
+    "communication",
+    "data",
+    "design",
+    "diagrams",
+    "formatting",
+    "free",
+    "inclusion",
+    "management",
+    "networking",
+    "planning",
+    "printable",
+    "productivity",
+    "professional-development",
+    "reference",
+    "research",
+    "spreadsheets",
+    "support",
+    "teaching",
+    "video",
+    "visuals",
+    "web",
+    "writing"
+  ],
+  "meta": {
+    "updated": "2026-06-16T08:00:00Z"
+  }
+}

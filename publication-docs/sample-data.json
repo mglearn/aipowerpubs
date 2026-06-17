@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "title": "Field Notes",
+    "tagline": "Practical ideas for educators and teams who do the work",
+    "issue": "Vol. 3, Issue 2"
+  },
+  "articles": [
+    {
+      "id": "small-bets-big-learning",
+      "slug": "small-bets-big-learning",
+      "title": "Small Bets, Big Learning: Designing Pilots That Actually Stick",
+      "category": "Strategy",
+      "byline": "Dana Okafor",
+      "date": "2026-05-28",
+      "excerpt": "Most initiatives die in the gap between a bold plan and a busy Tuesday. Here is a lighter way to test ideas before you commit the whole team.",
+      "featured": true,
+      "readingMinutes": 6,
+      "bodyHtml": "<p>Every team has a graveyard of good intentions: the framework that was rolled out in August and quietly abandoned by October, the platform nobody logs into, the strategy deck that lives only in a shared drive. The problem is rarely the idea. The problem is the distance between a bold plan and a busy Tuesday.</p><h2>Start with a question, not a solution</h2><p>A pilot is not a smaller version of a launch. It is an experiment designed to answer a specific question. Before you choose a tool or a method, write down the one thing you genuinely do not know yet.</p><blockquote>If you already know the answer, you are not running a pilot. You are running a rehearsal.</blockquote><h3>Good pilot questions sound like this</h3><ul><li>Will teachers use this without a mandate?</li><li>Does this save time, or just move the work somewhere else?</li><li>What breaks when we get to twenty users instead of two?</li></ul><div class=\"img-ph\">Image: A whiteboard sketch showing a single question circled in the center of a messy plan.</div><h2>Keep the bet small enough to lose</h2><p>The point of a small bet is that you can walk away from it without political cost. Pick a friendly group, set a fixed end date, and tell everyone up front that stopping is a valid outcome. When people know an experiment is allowed to fail, they tell you the truth about it.</p><h3>Three constraints that keep pilots honest</h3><ul><li><strong>Time:</strong> four to six weeks, never open-ended.</li><li><strong>Scope:</strong> one team, one workflow, one question.</li><li><strong>Exit:</strong> a written definition of what would make you stop.</li></ul><h2>Decide before you start what success looks like</h2><p>Vague pilots produce vague results, and vague results get interpreted by whoever has the most enthusiasm. Agree on a simple signal in advance, even an imperfect one. A short weekly check-in beats a sophisticated dashboard nobody reads.</p><p>When the bet pays off, you scale with evidence instead of optimism. When it does not, you have spent a few weeks instead of a few quarters, and you have a story your team will actually believe.</p>"
+    },
+    {
+      "id": "feedback-that-travels",
+      "slug": "feedback-that-travels",
+      "title": "Feedback That Travels: Notes People Can Use Tomorrow",
+      "category": "Coaching",
+      "byline": "Marcus Lin",
+      "date": "2026-05-14",
+      "excerpt": "Helpful feedback is not about being nicer or harsher. It is about being usable. A few small shifts make notes that move from the page into practice.",
+      "featured": false,
+      "readingMinutes": 5,
+      "bodyHtml": "<p>We tend to argue about feedback in the wrong terms. The debate is usually about tone, soft or direct, generous or blunt. But the feedback that changes behavior has less to do with tone and more to do with whether the person can act on it before they forget it.</p><h2>Name the moment, not the person</h2><p>Compare two notes. One says, \"You need to be more organized.\" The other says, \"In the third segment, the group lost the thread when two instructions arrived at once.\" The second is not softer. It is more useful, because it points at a moment that can be changed.</p><blockquote>People cannot edit a character trait. They can edit a Tuesday.</blockquote><h3>A simple structure that travels</h3><ul><li><strong>Where:</strong> the specific moment you observed.</li><li><strong>What:</strong> what happened, described plainly.</li><li><strong>Next:</strong> one concrete thing to try next time.</li></ul><div class=\"img-ph\">Image: A sticky note with three short lines, labeled Where, What, and Next.</div><h2>One note beats ten</h2><p>The instinct to be thorough often backfires. A page of observations becomes a wall the recipient cannot climb. Choose the single change that would matter most and lead with it. The rest can wait for the next conversation.</p><h2>End with a handoff, not a verdict</h2><p>Close by naming what you will look for next time. This turns feedback from a judgment into a shared project, and it makes the follow-up feel inevitable rather than punitive. The goal is not to be right about the past. It is to be useful about the future.</p>"
+    },
+    {
+      "id": "meetings-worth-the-room",
+      "slug": "meetings-worth-the-room",
+      "title": "Meetings Worth the Room: A Field Guide to Spending Time Well",
+      "category": "Teams",
+      "byline": "Priya Raman",
+      "date": "2026-04-30",
+      "excerpt": "A meeting is the most expensive tool most teams own and the one we plan the least. Here is how to make the calendar earn its keep.",
+      "featured": false,
+      "readingMinutes": 5,
+      "bodyHtml": "<p>Add up the salaries in the room for one hour and you have the true cost of a recurring meeting. We would never approve a purchase that size without a justification, yet standing meetings renew themselves automatically, year after year, long after their reason has faded.</p><h2>Ask what the meeting is for</h2><p>Most meetings quietly try to do three incompatible jobs at once: share information, make a decision, and build relationships. Each needs a different shape. Information can often be a written update. Decisions need the right people and a clear owner. Connection needs space, not an agenda.</p><h3>Match the format to the purpose</h3><ul><li><strong>To inform:</strong> consider a document people read before, not a presentation they sit through.</li><li><strong>To decide:</strong> state the decision and the deadline at the top.</li><li><strong>To connect:</strong> protect unstructured time and resist the urge to fill it.</li></ul><blockquote>If the only outcome of a meeting is scheduling the next meeting, it was an email wearing a costume.</blockquote><div class=\"img-ph\">Image: A weekly calendar with several recurring blocks crossed out in red.</div><h2>Default to ending early</h2><p>Work expands to fill the time allotted, so allot less. A meeting scheduled for thirty minutes that finishes in twenty returns time to everyone and signals respect. Make leaving early a sign of a good meeting, not an awkward one.</p><h2>Audit the standing slots</h2><p>Once a quarter, cancel every recurring meeting and only bring back the ones people actively ask for. The silence around the ones nobody missed is the most honest data you will get all year.</p>"
+    },
+    {
+      "id": "documentation-people-read",
+      "slug": "documentation-people-read",
+      "title": "Documentation People Actually Read",
+      "category": "Practice",
+      "byline": "Sofia Alvarez",
+      "date": "2026-04-16",
+      "excerpt": "The best documentation is not the most complete. It is the kind a tired person can follow at 4 p.m. on a Friday. Write for that reader.",
+      "featured": false,
+      "readingMinutes": 4,
+      "bodyHtml": "<p>There is a particular kind of pride in a thorough document, and a particular kind of disappointment when you discover no one has read it. Completeness and usefulness are not the same thing. The most-read pages in any organization are short, specific, and forgiving of the reader's hurry.</p><h2>Write for the tired reader</h2><p>Picture the person who will actually open this page: late in the day, mid-task, slightly stressed, looking for one answer. Every choice you make should serve that reader. Lead with what they came for. Save the background for those who scroll.</p><blockquote>Nobody reads documentation for pleasure. They read it to get unstuck.</blockquote><h3>Habits that help</h3><ul><li>Put the answer first and the explanation second.</li><li>Use real examples, not abstract placeholders.</li><li>Date the page so readers know if it is stale.</li></ul><div class=\"img-ph\">Image: A single screen showing a short how-to with the key step highlighted.</div><h2>Let it rot gracefully</h2><p>All documentation decays. Rather than pretending otherwise, design for it. A visible last-updated date and a single owner per page do more for trust than any style guide. When readers can see how fresh a page is, they can judge it for themselves, and they will forgive the gaps.</p>"
+    }
+  ]
+}

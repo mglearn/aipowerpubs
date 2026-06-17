@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Resource Directory</title>
+<meta name="description" content="A searchable, filterable catalog of curated tools, guides, courses, and links." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --navy:#002855; --navy-900:#001a3d; --navy-700:#003b7a;
+  --gold:#FFB81C; --gold-600:#d99a00;
+  --ink:#1a2230; --muted:#5a6577; --bg:#f4f6fa; --card:#ffffff; --border:#e2e8f0;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background:var(--bg); color:var(--ink); line-height:1.5;
+}
+a{color:var(--navy); text-decoration:none;}
+a:hover{color:var(--gold-600); text-decoration:underline;}
+
+/* ---------- Header ---------- */
+.site-header{
+  background:var(--navy);
+  color:#fff;
+  border-bottom:4px solid var(--gold);
+  padding:1.75rem 1.25rem 2rem;
+}
+.header-inner{max-width:1200px; margin:0 auto;}
+.site-title{margin:0; font-size:2rem; font-weight:700; letter-spacing:.2px;}
+.site-tagline{margin:.35rem 0 1.25rem; color:#cdd9ec; font-size:1.05rem;}
+.search-wrap{position:relative; max-width:640px;}
+.search-input{
+  width:100%; padding:.9rem 1rem .9rem 2.9rem;
+  font-size:1.05rem; font-family:inherit;
+  border:2px solid transparent; border-radius:10px;
+  background:#fff; color:var(--ink);
+  box-shadow:0 2px 8px rgba(0,0,0,.15);
+}
+.search-input::placeholder{color:var(--muted);}
+.search-input:focus{
+  outline:none;
+  border-color:var(--gold);
+  box-shadow:0 0 0 4px rgba(255,184,28,.45);
+}
+.search-icon{
+  position:absolute; left:.95rem; top:50%; transform:translateY(-50%);
+  width:1.2rem; height:1.2rem; color:var(--muted); pointer-events:none;
+}
+
+/* ---------- Layout ---------- */
+.layout{
+  max-width:1200px; margin:1.5rem auto; padding:0 1.25rem;
+  display:grid; grid-template-columns:260px 1fr; gap:1.5rem; align-items:start;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; padding:1.25rem; position:sticky; top:1rem;
+}
+.filter-toggle{display:none;}
+.filter-group{margin-bottom:1.5rem;}
+.filter-group:last-child{margin-bottom:0;}
+.filter-label{
+  font-size:.8rem; text-transform:uppercase; letter-spacing:.08em;
+  color:var(--muted); font-weight:700; margin:0 0 .6rem;
+}
+.cat-list{display:flex; flex-wrap:wrap; gap:.5rem;}
+.cat-pill{
+  font:inherit; font-size:.9rem; cursor:pointer;
+  padding:.4rem .75rem; border-radius:999px;
+  background:var(--navy); color:#fff; border:1px solid var(--navy);
+}
+.cat-pill:hover{background:var(--navy-700); border-color:var(--navy-700);}
+.cat-pill[aria-pressed="true"]{
+  background:var(--gold); color:var(--navy); border-color:var(--gold-600); font-weight:700;
+}
+.cat-pill:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+
+.tag-list{display:flex; flex-wrap:wrap; gap:.4rem; max-height:230px; overflow:auto; padding-right:.25rem;}
+.tag-toggle{
+  font:inherit; font-size:.8rem; cursor:pointer;
+  padding:.3rem .6rem; border-radius:999px;
+  background:#e8eefb; color:var(--navy); border:1px solid #d4e0f5;
+}
+.tag-toggle:hover{background:var(--gold); color:var(--navy); border-color:var(--gold-600);}
+.tag-toggle[aria-pressed="true"]{
+  background:var(--gold); color:var(--navy); border-color:var(--gold-600); font-weight:700;
+}
+.tag-toggle:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+
+.clear-btn{
+  font:inherit; font-size:.85rem; cursor:pointer; margin-top:.25rem;
+  padding:.45rem .8rem; border-radius:8px;
+  background:#fff; color:var(--navy); border:1px solid var(--border);
+}
+.clear-btn:hover{background:var(--bg); border-color:var(--navy);}
+.clear-btn:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+
+/* ---------- Main / Toolbar ---------- */
+.toolbar{
+  display:flex; align-items:center; justify-content:space-between;
+  gap:1rem; flex-wrap:wrap; margin-bottom:1rem;
+}
+.result-count{font-size:1rem; color:var(--muted); margin:0;}
+.result-count strong{color:var(--ink);}
+.sort-wrap{display:flex; align-items:center; gap:.5rem;}
+.sort-wrap label{font-size:.9rem; color:var(--muted);}
+.sort-select{
+  font:inherit; font-size:.95rem; padding:.45rem .7rem;
+  border:1px solid var(--border); border-radius:8px; background:#fff; color:var(--ink); cursor:pointer;
+}
+.sort-select:focus-visible{outline:3px solid var(--gold); outline-offset:2px; border-color:var(--gold);}
+
+.active-filters{display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:1rem;}
+.active-chip{
+  display:inline-flex; align-items:center; gap:.4rem;
+  font-size:.85rem; padding:.35rem .65rem; border-radius:999px;
+  background:var(--gold); color:var(--navy); border:1px solid var(--gold-600); font-weight:700;
+}
+.active-chip button{
+  border:none; background:transparent; cursor:pointer; font:inherit;
+  color:var(--navy); font-weight:700; line-height:1; padding:0; font-size:1rem;
+}
+.active-chip button:hover{color:var(--navy-900);}
+
+/* ---------- Cards grid ---------- */
+.grid{
+  display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:1.25rem;
+}
+.card{
+  background:var(--card); border:1px solid var(--border); border-radius:12px;
+  padding:1.15rem; display:flex; flex-direction:column; gap:.7rem;
+  box-shadow:0 1px 3px rgba(0,40,85,.06);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(0,40,85,.14);}
+.card-top{display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem;}
+.card-title{margin:0; font-size:1.18rem; font-weight:700; line-height:1.3;}
+.card-title a{color:var(--navy);}
+.card-title a:hover{color:var(--gold-600);}
+.featured-star{color:var(--gold); font-size:1.3rem; line-height:1; flex:none;}
+.card-meta{display:flex; flex-wrap:wrap; align-items:center; gap:.5rem;}
+.cat-pill-static{
+  font-size:.78rem; padding:.25rem .6rem; border-radius:999px;
+  background:var(--navy); color:#fff; font-weight:600;
+}
+.level-badge{font-size:.78rem; color:var(--muted); font-weight:600;}
+.rating{font-size:.8rem; color:var(--muted);}
+.rating .star{color:var(--gold);}
+.card-desc{margin:0; color:var(--ink); font-size:.95rem;}
+.card-tags{display:flex; flex-wrap:wrap; gap:.35rem; margin-top:auto;}
+.card-tag{
+  font:inherit; font-size:.75rem; cursor:pointer;
+  padding:.22rem .55rem; border-radius:999px;
+  background:#e8eefb; color:var(--navy); border:1px solid #d4e0f5;
+}
+.card-tag:hover{background:var(--gold); color:var(--navy); border-color:var(--gold-600);}
+.card-tag:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+.card-foot{font-size:.78rem; color:var(--muted); margin-top:.25rem;}
+
+/* ---------- States ---------- */
+.state{
+  text-align:center; padding:3.5rem 1rem; color:var(--muted);
+  background:var(--card); border:1px dashed var(--border); border-radius:12px;
+}
+.state h2{color:var(--ink); margin:.25rem 0 .5rem;}
+.state.error{border-color:#e0a3a3; background:#fff5f5; color:#8a2b2b;}
+.spinner{
+  width:36px; height:36px; margin:0 auto 1rem; border-radius:50%;
+  border:4px solid #d4e0f5; border-top-color:var(--navy); animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg);}}
+[hidden]{display:none !important;}
+
+/* ---------- Footer ---------- */
+.site-footer{
+  background:var(--navy); color:#fff; text-align:center;
+  padding:1.75rem 1rem; margin-top:2.5rem; border-top:4px solid var(--gold);
+}
+.footer-inner{max-width:900px; margin:0 auto;}
+.site-footer p{margin:.35rem 0; font-size:.95rem;}
+.site-footer a{color:var(--gold);}
+.site-footer a:hover{color:#fff;}
+.cc-line{font-weight:600;}
+
+/* ---------- Responsive ---------- */
+@media (max-width:760px){
+  .layout{grid-template-columns:1fr;}
+  .sidebar{position:static;}
+  .filter-toggle{
+    display:block; width:100%; font:inherit; font-size:1rem; font-weight:700;
+    cursor:pointer; padding:.7rem 1rem; border-radius:10px;
+    background:var(--navy); color:#fff; border:none; margin-bottom:.75rem;
+  }
+  .filter-toggle:focus-visible{outline:3px solid var(--gold); outline-offset:2px;}
+  .sidebar-body[data-collapsed="true"]{display:none;}
+  .site-title{font-size:1.6rem;}
+}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <h1 class="site-title">Resource Directory</h1>
+    <p class="site-tagline">A curated, searchable catalog of tools, guides, courses, templates, and communities.</p>
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="7"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input id="search" class="search-input" type="search" placeholder="Search resources, descriptions, tags..." aria-label="Search resources" autocomplete="off" />
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <!-- Sidebar / filters -->
+  <aside class="sidebar" aria-label="Filters">
+    <button class="filter-toggle" id="filterToggle" aria-expanded="false" aria-controls="sidebarBody">Filters</button>
+    <div class="sidebar-body" id="sidebarBody" data-collapsed="false">
+      <div class="filter-group">
+        <p class="filter-label" id="catLabel">Categories</p>
+        <div class="cat-list" id="catList" role="group" aria-labelledby="catLabel"></div>
+      </div>
+      <div class="filter-group">
+        <p class="filter-label" id="tagLabel">Tags</p>
+        <div class="tag-list" id="tagList" role="group" aria-labelledby="tagLabel"></div>
+      </div>
+      <div class="filter-group">
+        <button class="clear-btn" id="clearBtn">Clear all filters</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main results -->
+  <main>
+    <div class="toolbar">
+      <p class="result-count" id="resultCount" aria-live="polite"></p>
+      <div class="sort-wrap">
+        <label for="sort">Sort</label>
+        <select class="sort-select" id="sort">
+          <option value="az">A &rarr; Z</option>
+          <option value="za">Z &rarr; A</option>
+          <option value="newest">Newest</option>
+          <option value="featured">Featured first</option>
+          <option value="rating">Top rated</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="exportbar"></div>
+
+    <div class="active-filters" id="activeFilters" aria-label="Active filters"></div>
+
+    <!-- States -->
+    <div class="state" id="loading">
+      <div class="spinner" aria-hidden="true"></div>
+      <p>Loading resources&hellip;</p>
+    </div>
+    <div class="state error" id="error" hidden>
+      <h2>Could not load resources</h2>
+      <p id="errorMsg">Something went wrong while fetching the directory.</p>
+    </div>
+    <div class="state" id="empty" hidden>
+      <h2>No resources match your filters</h2>
+      <p>Try clearing a filter or changing your search terms.</p>
+    </div>
+
+    <div class="grid" id="grid" hidden></div>
+  </main>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="cc-line"><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> &middot; Miguel Guhlin</p>
+    <p class="contact-line">
+      <a href="mailto:mguhlin@tcea.org">mguhlin@tcea.org</a> &middot;
+      <a href="https://mguhlin.org" target="_blank" rel="noopener">mguhlin.org</a> &middot;
+      <a href="https://go.mgpd.org/lftx2606" target="_blank" rel="noopener">go.mgpd.org/lftx2606</a>
+    </p>
+  </div>
+</footer>
+
+<!-- ============================================================
+     EMBEDDED DEMO DATA
+     An exact copy of sample-data.json, inlined so the page works
+     when opened by double-clicking (file://), where browsers block
+     fetch() of local files. The script below prefers a live URL,
+     then ./sample-data.json, then falls back to this block.
+     ============================================================ -->
+<script type="application/json" id="demo-data">
+{
+  "resources": [
+    {
+      "title": "Markdown Cheat Sheet",
+      "url": "https://example.org/markdown-cheatsheet",
+      "category": "Guides",
+      "tags": ["writing", "reference", "formatting"],
+      "description": "A one-page reference covering headings, lists, links, tables, and code blocks in Markdown.",
+      "level": "Beginner",
+      "rating": 4.6,
+      "featured": true,
+      "added": "2026-05-28"
+    },
+    {
+      "title": "Open Source Diagram Maker",
+      "url": "https://example.org/diagram-maker",
+      "category": "Tools",
+      "tags": ["diagrams", "visuals", "free"],
+      "description": "Browser-based tool for flowcharts, mind maps, and network diagrams with export to PNG and SVG.",
+      "level": "Beginner",
+      "rating": 4.8,
+      "featured": true,
+      "added": "2026-06-02"
+    },
+    {
+      "title": "Intro to Data Analysis",
+      "url": "https://example.org/data-analysis-course",
+      "category": "Courses",
+      "tags": ["data", "spreadsheets", "analytics"],
+      "description": "A self-paced course teaching the fundamentals of cleaning, summarizing, and charting data.",
+      "level": "Intermediate",
+      "rating": 4.4,
+      "featured": false,
+      "added": "2026-04-15"
+    },
+    {
+      "title": "Lesson Plan Template Pack",
+      "url": "https://example.org/lesson-plan-templates",
+      "category": "Templates",
+      "tags": ["teaching", "planning", "printable"],
+      "description": "A bundle of editable lesson plan templates for daily, weekly, and unit planning.",
+      "level": "Beginner",
+      "rating": 4.2,
+      "featured": false,
+      "added": "2026-03-22"
+    },
+    {
+      "title": "Educators Discussion Forum",
+      "url": "https://example.org/educators-forum",
+      "category": "Communities",
+      "tags": ["teaching", "networking", "support"],
+      "description": "An active community where educators share strategies, ask questions, and trade resources.",
+      "level": "Beginner",
+      "rating": 4.5,
+      "featured": false,
+      "added": "2026-05-10"
+    },
+    {
+      "title": "Color Palette Generator",
+      "url": "https://example.org/color-palette",
+      "category": "Tools",
+      "tags": ["design", "visuals", "accessibility"],
+      "description": "Generate accessible, high-contrast color palettes for slides, sites, and print materials.",
+      "level": "Beginner",
+      "rating": 4.7,
+      "featured": true,
+      "added": "2026-06-08"
+    },
+    {
+      "title": "Advanced Spreadsheet Formulas",
+      "url": "https://example.org/spreadsheet-formulas",
+      "category": "Guides",
+      "tags": ["spreadsheets", "data", "reference"],
+      "description": "A deep dive into lookup, array, and conditional formulas with worked examples.",
+      "level": "Advanced",
+      "rating": 4.3,
+      "featured": false,
+      "added": "2026-02-18"
+    },
+    {
+      "title": "Project Planning Course",
+      "url": "https://example.org/project-planning",
+      "category": "Courses",
+      "tags": ["planning", "management", "productivity"],
+      "description": "Learn to scope, schedule, and track projects from kickoff through delivery.",
+      "level": "Intermediate",
+      "rating": 4.1,
+      "featured": false,
+      "added": "2026-01-30"
+    },
+    {
+      "title": "Newsletter Template Set",
+      "url": "https://example.org/newsletter-templates",
+      "category": "Templates",
+      "tags": ["communication", "printable", "design"],
+      "description": "Ready-to-use newsletter layouts for classrooms, teams, and organizations.",
+      "level": "Beginner",
+      "rating": 4.0,
+      "featured": false,
+      "added": "2026-04-04"
+    },
+    {
+      "title": "Accessibility Checklist",
+      "url": "https://example.org/accessibility-checklist",
+      "category": "Guides",
+      "tags": ["accessibility", "reference", "inclusion"],
+      "description": "A practical checklist for making documents, slides, and websites accessible to everyone.",
+      "level": "Intermediate",
+      "rating": 4.9,
+      "featured": true,
+      "added": "2026-06-12"
+    },
+    {
+      "title": "Screen Recording App",
+      "url": "https://example.org/screen-recorder",
+      "category": "Tools",
+      "tags": ["video", "free", "productivity"],
+      "description": "Lightweight app for recording your screen with audio, ideal for tutorials and demos.",
+      "level": "Beginner",
+      "rating": 4.4,
+      "featured": false,
+      "added": "2026-05-19"
+    },
+    {
+      "title": "Online Learning Network",
+      "url": "https://example.org/learning-network",
+      "category": "Communities",
+      "tags": ["networking", "professional-development", "support"],
+      "description": "A network of professionals sharing courses, mentorship, and career resources.",
+      "level": "Intermediate",
+      "rating": 4.3,
+      "featured": false,
+      "added": "2026-03-11"
+    },
+    {
+      "title": "Web Development Bootcamp",
+      "url": "https://example.org/webdev-bootcamp",
+      "category": "Courses",
+      "tags": ["coding", "web", "productivity"],
+      "description": "A hands-on bootcamp covering HTML, CSS, and JavaScript through real projects.",
+      "level": "Advanced",
+      "rating": 4.6,
+      "featured": true,
+      "added": "2026-06-14"
+    },
+    {
+      "title": "Citation Style Guide",
+      "url": "https://example.org/citation-guide",
+      "category": "Guides",
+      "tags": ["writing", "reference", "research"],
+      "description": "Quick guidance on common citation styles with formatted examples for each.",
+      "level": "Beginner",
+      "rating": 4.2,
+      "featured": false,
+      "added": "2026-02-27"
+    }
+  ],
+  "categories": ["Communities", "Courses", "Guides", "Templates", "Tools"],
+  "tags": [
+    "accessibility",
+    "analytics",
+    "coding",
+    "communication",
+    "data",
+    "design",
+    "diagrams",
+    "formatting",
+    "free",
+    "inclusion",
+    "management",
+    "networking",
+    "planning",
+    "printable",
+    "productivity",
+    "professional-development",
+    "reference",
+    "research",
+    "spreadsheets",
+    "support",
+    "teaching",
+    "video",
+    "visuals",
+    "web",
+    "writing"
+  ],
+  "meta": {
+    "updated": "2026-06-16T08:00:00Z"
+  }
+}
+</script>
+
+<script src="export.js"></script>
+
+<script>
+/* ============================================================
+   CONFIG
+   Leave WEB_APP_URL empty to use the bundled demo data.
+   Paste your Apps Script /exec URL to go live.
+
+   Data priority:
+     1. WEB_APP_URL (if set)         → live data from your Sheet
+     2. ./sample-data.json (if served over http) → bundled file
+     3. embedded #demo-data block    → works on a plain double-click
+   ============================================================ */
+const WEB_APP_URL = "";
+
+/* ---------- State ---------- */
+const state = {
+  all: [],            // all resources
+  categories: [],     // unique category list
+  tags: [],           // unique tag list
+  search: "",
+  activeCategory: "", // single category (empty = all)
+  activeTags: new Set(),
+  sort: "az",
+  visible: []          // the currently filtered + sorted list (what the cards show)
+};
+
+/* ---------- Elements ---------- */
+const el = {
+  search: document.getElementById("search"),
+  catList: document.getElementById("catList"),
+  tagList: document.getElementById("tagList"),
+  clearBtn: document.getElementById("clearBtn"),
+  sort: document.getElementById("sort"),
+  activeFilters: document.getElementById("activeFilters"),
+  resultCount: document.getElementById("resultCount"),
+  grid: document.getElementById("grid"),
+  loading: document.getElementById("loading"),
+  error: document.getElementById("error"),
+  errorMsg: document.getElementById("errorMsg"),
+  empty: document.getElementById("empty"),
+  filterToggle: document.getElementById("filterToggle"),
+  sidebarBody: document.getElementById("sidebarBody")
+};
+
+/* ---------- Utilities ---------- */
+function debounce(fn, ms){
+  let t;
+  return function(...args){
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), ms);
+  };
+}
+function escapeHtml(str){
+  return String(str == null ? "" : str)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+function formatDate(iso){
+  if(!iso) return "";
+  const d = new Date(iso);
+  if(isNaN(d)) return String(iso);
+  return d.toLocaleDateString(undefined, { year:"numeric", month:"short", day:"numeric" });
+}
+
+/* ---------- Data loading ----------
+   Priority:
+     1. If WEB_APP_URL is set, fetch live data from the Sheet.
+     2. Else try to fetch ./sample-data.json (works when served over http).
+     3. If that fails (the file:// double-click case), fall back to the
+        embedded #demo-data JSON so the demo always renders.
+*/
+async function loadData(){
+  // 1. Live data from a deployed Apps Script Web App.
+  if(WEB_APP_URL && WEB_APP_URL.trim()){
+    try{
+      const res = await fetch(WEB_APP_URL.trim(), { method:"GET" });
+      if(!res.ok) throw new Error("HTTP " + res.status);
+      ingest(await res.json());
+      return;
+    }catch(err){
+      showError("Could not fetch the directory data (" + err.message + "). " +
+        "If you are using a Google Apps Script Web App, confirm it is deployed with access set to “Anyone.”");
+      return;
+    }
+  }
+
+  // 2. Bundled sample-data.json (succeeds when the folder is served over http).
+  try{
+    const res = await fetch("./sample-data.json", { method:"GET" });
+    if(!res.ok) throw new Error("HTTP " + res.status);
+    ingest(await res.json());
+    return;
+  }catch(err){
+    // 3. file:// fallback — use the embedded demo data so it still works.
+    const embedded = loadEmbeddedData();
+    if(embedded){
+      ingest(embedded);
+      return;
+    }
+    showError("Could not load the demo data. " +
+      "Try serving this folder over http (for example: python3 -m http.server).");
+  }
+}
+
+/* Parse the inline <script id="demo-data"> JSON block. */
+function loadEmbeddedData(){
+  const node = document.getElementById("demo-data");
+  if(!node) return null;
+  try{
+    return JSON.parse(node.textContent);
+  }catch(err){
+    return null;
+  }
+}
+
+function ingest(data){
+  state.all = Array.isArray(data.resources) ? data.resources : [];
+  // Use server-provided filter lists when present; otherwise derive them.
+  state.categories = Array.isArray(data.categories) && data.categories.length
+    ? data.categories.slice()
+    : [...new Set(state.all.map(r => r.category).filter(Boolean))].sort((a,b)=>a.localeCompare(b));
+  state.tags = Array.isArray(data.tags) && data.tags.length
+    ? data.tags.slice()
+    : [...new Set(state.all.flatMap(r => Array.isArray(r.tags) ? r.tags : []))].sort((a,b)=>a.localeCompare(b));
+
+  el.loading.hidden = true;
+  buildCategoryFilters();
+  buildTagFilters();
+  render();
+}
+
+function showError(msg){
+  el.loading.hidden = true;
+  el.grid.hidden = true;
+  el.empty.hidden = true;
+  el.error.hidden = false;
+  el.errorMsg.textContent = msg;
+}
+
+/* ---------- Build filter controls ---------- */
+function buildCategoryFilters(){
+  el.catList.innerHTML = "";
+  const allBtn = makeCatPill("All", "");
+  el.catList.appendChild(allBtn);
+  state.categories.forEach(cat => el.catList.appendChild(makeCatPill(cat, cat)));
+  updateCategoryPressed();
+}
+function makeCatPill(label, value){
+  const b = document.createElement("button");
+  b.className = "cat-pill";
+  b.type = "button";
+  b.textContent = label;
+  b.dataset.value = value;
+  b.setAttribute("aria-pressed", "false");
+  b.addEventListener("click", () => {
+    state.activeCategory = value;
+    updateCategoryPressed();
+    render();
+  });
+  return b;
+}
+function updateCategoryPressed(){
+  el.catList.querySelectorAll(".cat-pill").forEach(b => {
+    b.setAttribute("aria-pressed", String(b.dataset.value === state.activeCategory));
+  });
+}
+
+function buildTagFilters(){
+  el.tagList.innerHTML = "";
+  state.tags.forEach(tag => {
+    const b = document.createElement("button");
+    b.className = "tag-toggle";
+    b.type = "button";
+    b.textContent = tag;
+    b.dataset.value = tag;
+    b.setAttribute("aria-pressed", "false");
+    b.addEventListener("click", () => toggleTag(tag));
+    el.tagList.appendChild(b);
+  });
+}
+function updateTagPressed(){
+  el.tagList.querySelectorAll(".tag-toggle").forEach(b => {
+    b.setAttribute("aria-pressed", String(state.activeTags.has(b.dataset.value)));
+  });
+}
+function toggleTag(tag){
+  if(state.activeTags.has(tag)) state.activeTags.delete(tag);
+  else state.activeTags.add(tag);
+  updateTagPressed();
+  render();
+}
+
+/* ---------- Filtering, sorting ---------- */
+function getFiltered(){
+  const q = state.search.trim().toLowerCase();
+  let list = state.all.filter(r => {
+    if(state.activeCategory && r.category !== state.activeCategory) return false;
+    if(state.activeTags.size){
+      const tags = Array.isArray(r.tags) ? r.tags : [];
+      for(const t of state.activeTags){ if(!tags.includes(t)) return false; }
+    }
+    if(q){
+      const hay = [
+        r.title, r.description, r.category, r.level,
+        (Array.isArray(r.tags) ? r.tags.join(" ") : "")
+      ].join(" ").toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+  return sortList(list);
+}
+function sortList(list){
+  const s = state.sort;
+  const byTitle = (a,b) => String(a.title||"").localeCompare(String(b.title||""));
+  switch(s){
+    case "az":    return list.sort(byTitle);
+    case "za":    return list.sort((a,b)=>byTitle(b,a));
+    case "newest":return list.sort((a,b)=> new Date(b.added||0) - new Date(a.added||0));
+    case "featured": return list.sort((a,b)=> (b.featured?1:0)-(a.featured?1:0) || byTitle(a,b));
+    case "rating":return list.sort((a,b)=> (Number(b.rating)||0)-(Number(a.rating)||0) || byTitle(a,b));
+    default:      return list;
+  }
+}
+
+/* ---------- Render ---------- */
+/* ---------- Export (Copy bar) ----------
+   These getters read state.visible — the live, currently filtered + sorted
+   list — so whatever is on screen is exactly what gets copied. */
+const DIRECTORY_TITLE = "Resource Directory";
+
+/* Group the current visible list by category, preserving each category's
+   first-seen order in the (already sorted) list. */
+function groupVisibleByCategory(){
+  const groups = new Map();
+  state.visible.forEach(r => {
+    const cat = (r.category && String(r.category).trim()) || "Uncategorized";
+    if(!groups.has(cat)) groups.set(cat, []);
+    groups.get(cat).push(r);
+  });
+  return groups;
+}
+
+/* "(Beginner · ★4.6)" style suffix when level/rating are present. */
+function metaSuffix(r){
+  const bits = [];
+  if(r.level) bits.push(String(r.level));
+  if(r.rating || r.rating === 0) bits.push("★" + r.rating);
+  return bits.length ? " (" + bits.join(" · ") + ")" : "";
+}
+
+function getMarkdown(){
+  const lines = ["# " + DIRECTORY_TITLE, ""];
+  const groups = groupVisibleByCategory();
+  if(!groups.size){
+    lines.push("_No resources match the current filters._", "");
+    return lines.join("\n");
+  }
+  groups.forEach((items, cat) => {
+    lines.push("## " + cat, "");
+    items.forEach(r => {
+      const title = r.title || "Untitled";
+      const url = r.url || "#";
+      const desc = r.description ? " — " + r.description : "";
+      const tags = Array.isArray(r.tags) ? r.tags : [];
+      const tagPart = tags.length ? " _(tags: " + tags.join(", ") + ")_" : "";
+      lines.push("- [" + title + "](" + url + ")" + desc + tagPart + metaSuffix(r));
+    });
+    lines.push("");
+  });
+  return lines.join("\n").replace(/\n+$/, "\n");
+}
+
+function getHtml(){
+  const parts = ["<h1>" + escapeHtml(DIRECTORY_TITLE) + "</h1>"];
+  const groups = groupVisibleByCategory();
+  if(!groups.size){
+    parts.push("<p>No resources match the current filters.</p>");
+    return parts.join("\n");
+  }
+  groups.forEach((items, cat) => {
+    parts.push("<h2>" + escapeHtml(cat) + "</h2>");
+    const lis = items.map(r => {
+      const title = escapeHtml(r.title || "Untitled");
+      const url = escapeHtml(r.url || "#");
+      const desc = r.description ? " — " + escapeHtml(r.description) : "";
+      const tags = Array.isArray(r.tags) ? r.tags : [];
+      const tagPart = tags.length
+        ? " <em>(tags: " + escapeHtml(tags.join(", ")) + ")</em>"
+        : "";
+      return "<li><a href=\"" + url + "\">" + title + "</a>" + desc + tagPart +
+        escapeHtml(metaSuffix(r)) + "</li>";
+    }).join("");
+    parts.push("<ul>" + lis + "</ul>");
+  });
+  return parts.join("\n");
+}
+
+/* Tracks whether the export bar has been mounted yet. */
+let exportBarMounted = false;
+
+function render(){
+  const list = getFiltered();
+  state.visible = list;          // keep the live list in sync so the export getters read it
+  renderActiveFilters();
+
+  el.resultCount.innerHTML = "<strong>" + list.length + "</strong> resource" +
+    (list.length === 1 ? "" : "s") + " found";
+
+  // Mount the Copy bar once, after the first render. The getters read
+  // state.visible (live), so later re-filtering changes what gets copied
+  // without needing to re-mount.
+  if(!exportBarMounted && window.ExportBar){
+    window.ExportBar.mount({
+      mount: "#exportbar",
+      label: "list",
+      getMarkdown: getMarkdown,
+      getHtml: getHtml
+    });
+    exportBarMounted = true;
+  }
+
+  if(!list.length){
+    el.grid.hidden = true;
+    el.empty.hidden = false;
+    return;
+  }
+  el.empty.hidden = true;
+  el.grid.hidden = false;
+  el.grid.innerHTML = list.map(cardHtml).join("");
+
+  // Wire up card tag chips (add to active filters)
+  el.grid.querySelectorAll(".card-tag").forEach(btn => {
+    btn.addEventListener("click", () => {
+      if(!state.activeTags.has(btn.dataset.value)){
+        state.activeTags.add(btn.dataset.value);
+        updateTagPressed();
+        render();
+      }
+    });
+  });
+}
+
+function cardHtml(r){
+  const tags = Array.isArray(r.tags) ? r.tags : [];
+  const tagHtml = tags.map(t =>
+    '<button type="button" class="card-tag" data-value="' + escapeHtml(t) +
+    '" aria-label="Filter by tag ' + escapeHtml(t) + '">#' + escapeHtml(t) + '</button>'
+  ).join("");
+
+  const star = r.featured
+    ? '<span class="featured-star" title="Featured" aria-label="Featured">&#9733;</span>'
+    : '';
+  const level = r.level
+    ? '<span class="level-badge">' + escapeHtml(r.level) + '</span>'
+    : '';
+  const rating = (r.rating || r.rating === 0)
+    ? '<span class="rating"><span class="star">&#9733;</span> ' + escapeHtml(r.rating) + '</span>'
+    : '';
+  const added = r.added
+    ? '<p class="card-foot">Added ' + escapeHtml(formatDate(r.added)) + '</p>'
+    : '';
+  const url = r.url ? escapeHtml(r.url) : '#';
+
+  return '' +
+    '<article class="card">' +
+      '<div class="card-top">' +
+        '<h3 class="card-title"><a href="' + url + '" target="_blank" rel="noopener">' +
+          escapeHtml(r.title || "Untitled") + '</a></h3>' +
+        star +
+      '</div>' +
+      '<div class="card-meta">' +
+        '<span class="cat-pill-static">' + escapeHtml(r.category || "Uncategorized") + '</span>' +
+        level + rating +
+      '</div>' +
+      '<p class="card-desc">' + escapeHtml(r.description || "") + '</p>' +
+      '<div class="card-tags">' + tagHtml + '</div>' +
+      added +
+    '</article>';
+}
+
+function renderActiveFilters(){
+  const chips = [];
+  if(state.activeCategory){
+    chips.push(chipHtml("category", state.activeCategory, "Category: " + state.activeCategory));
+  }
+  state.activeTags.forEach(t => chips.push(chipHtml("tag", t, "#" + t)));
+  if(state.search.trim()){
+    chips.push(chipHtml("search", "", 'Search: "' + state.search.trim() + '"'));
+  }
+  el.activeFilters.innerHTML = chips.join("");
+
+  el.activeFilters.querySelectorAll(".active-chip button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const kind = btn.dataset.kind, val = btn.dataset.value;
+      if(kind === "category"){ state.activeCategory = ""; updateCategoryPressed(); }
+      else if(kind === "tag"){ state.activeTags.delete(val); updateTagPressed(); }
+      else if(kind === "search"){ state.search = ""; el.search.value = ""; }
+      render();
+    });
+  });
+}
+function chipHtml(kind, value, label){
+  return '<span class="active-chip">' + escapeHtml(label) +
+    '<button type="button" data-kind="' + kind + '" data-value="' + escapeHtml(value) +
+    '" aria-label="Remove filter ' + escapeHtml(label) + '">&times;</button></span>';
+}
+
+/* ---------- Events ---------- */
+el.search.addEventListener("input", debounce(e => {
+  state.search = e.target.value;
+  render();
+}, 200));
+
+el.sort.addEventListener("change", e => {
+  state.sort = e.target.value;
+  render();
+});
+
+el.clearBtn.addEventListener("click", () => {
+  state.search = "";
+  el.search.value = "";
+  state.activeCategory = "";
+  state.activeTags.clear();
+  state.sort = "az";
+  el.sort.value = "az";
+  updateCategoryPressed();
+  updateTagPressed();
+  render();
+});
+
+el.filterToggle.addEventListener("click", () => {
+  const collapsed = el.sidebarBody.dataset.collapsed === "true";
+  el.sidebarBody.dataset.collapsed = String(!collapsed);
+  el.filterToggle.setAttribute("aria-expanded", String(collapsed));
+});
+
+/* Collapse the filter panel by default on small screens. */
+function applyResponsiveDefault(){
+  if(window.matchMedia("(max-width:760px)").matches){
+    el.sidebarBody.dataset.collapsed = "true";
+    el.filterToggle.setAttribute("aria-expanded", "false");
+  }else{
+    el.sidebarBody.dataset.collapsed = "false";
+  }
+}
+applyResponsiveDefault();
+
+/* ---------- Go ---------- */
+loadData();
+</script>
+</body>
+</html>

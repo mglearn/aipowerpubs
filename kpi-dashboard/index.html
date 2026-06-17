@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<!--
+  KPI Dashboard — Google Sheets-powered metrics dashboard.
+  CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | mguhlin.org | https://go.mgpd.org/lftx2606)
+  Set WEB_APP_URL to your Apps Script /exec URL. Empty = bundled demo (sample-data.json).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KPI Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+  :root{
+    --navy:#002855; --navy-900:#001a3d; --navy-700:#003b7a;
+    --gold:#FFB81C; --gold-600:#d99a00;
+    --ink:#1a2230; --muted:#5a6577; --bg:#f4f6fa; --card:#ffffff; --border:#e2e8f0;
+    --pos:#1f9d55; --neg:#d64545;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Source Sans 3',-apple-system,Segoe UI,Roboto,sans-serif}
+  a{color:var(--navy-700)} a:hover{color:var(--gold-600)}
+  header.bar{background:var(--navy);color:#fff;padding:20px 28px;border-bottom:5px solid var(--gold);
+    display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+  header.bar h1{margin:0;font-size:1.5rem;font-weight:800}
+  header.bar .right{display:flex;align-items:center;gap:14px;font-size:.9rem;color:#cdd9ea}
+  header.bar button{background:var(--gold);color:var(--navy-900);border:0;font-weight:700;
+    padding:8px 16px;border-radius:8px;cursor:pointer}
+  header.bar button:hover{background:#ffc94d}
+  main{max-width:1080px;margin:24px auto;padding:0 20px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px;
+    box-shadow:0 2px 10px rgba(0,40,85,.05)}
+  .card .label{color:var(--muted);font-size:.85rem;text-transform:uppercase;letter-spacing:.5px}
+  .card .value{font-size:2rem;font-weight:800;color:var(--navy);margin:4px 0;line-height:1.1}
+  .card .sub{font-size:.85rem;color:var(--muted)}
+  .card .delta{font-weight:700;font-size:.9rem}
+  .delta.up{color:var(--pos)} .delta.down{color:var(--neg)}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle}
+  .dot.up{background:var(--pos)} .dot.down{background:var(--neg)}
+  .charts{display:grid;grid-template-columns:1.4fr 1fr;gap:16px;margin-top:20px}
+  .chart-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px 20px}
+  .chart-card h2{margin:0 0 12px;color:var(--navy);font-size:1.1rem}
+  table{width:100%;border-collapse:collapse;background:var(--card);border-radius:12px;overflow:hidden;
+    margin-top:20px;border:1px solid var(--border)}
+  th,td{padding:11px 14px;text-align:left;border-bottom:1px solid var(--border);font-size:.94rem}
+  th{background:var(--navy);color:#fff;font-weight:700;cursor:pointer;user-select:none}
+  th:hover{background:var(--navy-700)}
+  tr:hover td{background:#f7f9fc}
+  .section-title{color:var(--navy);margin:26px 0 4px;font-size:1.15rem}
+  .state{padding:60px;text-align:center;color:var(--muted)}
+  .state .spin{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--gold);
+    border-radius:50%;display:inline-block;animation:sp 1s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .site-footer{background:var(--navy);color:#fff;text-align:center;padding:26px 20px;margin-top:30px}
+  .site-footer a{color:var(--gold);text-decoration:none}
+  .site-footer a:hover{text-decoration:underline}
+  .site-footer .contact-line{color:#cdd9ea;font-size:.92rem;margin-top:6px}
+  @media (max-width:760px){.charts{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="bar">
+  <h1>Organizational KPI Dashboard</h1>
+  <div class="right">
+    <span id="updated">—</span>
+    <button id="refresh">↻ Refresh</button>
+  </div>
+</header>
+
+<main id="main">
+  <div class="state"><span class="spin"></span><p>Loading metrics…</p></div>
+</main>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="cc-line"><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> &middot; Miguel Guhlin</p>
+    <p class="contact-line">
+      <a href="mailto:mguhlin@tcea.org">mguhlin@tcea.org</a> &middot;
+      <a href="https://mguhlin.org" target="_blank" rel="noopener">mguhlin.org</a> &middot;
+      <a href="https://go.mgpd.org/lftx2606" target="_blank" rel="noopener">go.mgpd.org/lftx2606</a>
+    </p>
+  </div>
+</footer>
+
+<!-- Embedded demo data: lets the page work on a plain double-click (file://),
+     where browsers block reading sample-data.json. Same content as sample-data.json. -->
+<script type="application/json" id="demo-data">
+{
+  "kpis": [
+    { "metric": "Active Members", "value": 4820, "target": 5000, "unit": "", "period": "This month", "trend": "up", "category": "Membership", "notes": "Steady growth from spring campaign." },
+    { "metric": "Course Completions", "value": 1340, "target": 1200, "unit": "", "period": "This month", "trend": "up", "category": "Learning", "notes": "Above target." },
+    { "metric": "Net Promoter Score", "value": 62, "target": 60, "unit": "", "period": "Q2", "trend": "up", "category": "Satisfaction", "notes": "" },
+    { "metric": "Events Held", "value": 18, "target": 24, "unit": "", "period": "This quarter", "trend": "down", "category": "Engagement", "notes": "Two events postponed." },
+    { "metric": "Support Tickets Resolved", "value": 96, "target": 95, "unit": "%", "period": "This month", "trend": "up", "category": "Operations", "notes": "" },
+    { "metric": "Avg. Satisfaction", "value": 4.6, "target": 4.5, "unit": "/5", "period": "This month", "trend": "up", "category": "Satisfaction", "notes": "" }
+  ],
+  "trend": [
+    { "Period": "Jan", "Metric": "Active Members", "Value": 4100 },
+    { "Period": "Feb", "Metric": "Active Members", "Value": 4250 },
+    { "Period": "Mar", "Metric": "Active Members", "Value": 4380 },
+    { "Period": "Apr", "Metric": "Active Members", "Value": 4510 },
+    { "Period": "May", "Metric": "Active Members", "Value": 4690 },
+    { "Period": "Jun", "Metric": "Active Members", "Value": 4820 },
+    { "Period": "Jan", "Metric": "Course Completions", "Value": 880 },
+    { "Period": "Feb", "Metric": "Course Completions", "Value": 940 },
+    { "Period": "Mar", "Metric": "Course Completions", "Value": 1010 },
+    { "Period": "Apr", "Metric": "Course Completions", "Value": 1150 },
+    { "Period": "May", "Metric": "Course Completions", "Value": 1265 },
+    { "Period": "Jun", "Metric": "Course Completions", "Value": 1340 }
+  ],
+  "details": [
+    { "Region": "North", "Members": 1320, "Completions": 410, "Satisfaction": 4.7 },
+    { "Region": "South", "Members": 1180, "Completions": 360, "Satisfaction": 4.5 },
+    { "Region": "East", "Members": 1090, "Completions": 300, "Satisfaction": 4.6 },
+    { "Region": "West", "Members": 1230, "Completions": 270, "Satisfaction": 4.4 },
+    { "Region": "Online", "Members": 0, "Completions": 0, "Satisfaction": 0 }
+  ],
+  "meta": { "updated": "2026-06-16T12:00:00.000Z" }
+}
+</script>
+
+<script>
+// ===== CONFIG =====
+const WEB_APP_URL = "";   // empty = use ./sample-data.json
+
+const NAVY="#002855", GOLD="#FFB81C", NAVY7="#003b7a", GOLD6="#d99a00";
+const PALETTE=[NAVY,GOLD,NAVY7,GOLD6,"#6b8cae","#b89230","#9fb4cc"];
+const esc=s=>(s==null?"":String(s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num=v=>{const n=parseFloat(String(v).replace(/[^0-9.\-]/g,""));return isNaN(n)?0:n;};
+let charts=[];
+
+// Demo works on a plain double-click: tries the live URL, then the JSON file,
+// then the embedded copy (used when the browser blocks file:// reads).
+async function getData(){
+  if(WEB_APP_URL){
+    const res=await fetch(WEB_APP_URL+"?t="+Date.now(),{redirect:"follow"});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    return res.json();
+  }
+  try{
+    const res=await fetch("./sample-data.json");
+    if(res.ok) return await res.json();
+  }catch(e){ /* file:// blocks this — fall through to embedded data */ }
+  return JSON.parse(document.getElementById("demo-data").textContent);
+}
+
+async function load(){
+  const main=document.getElementById("main");
+  main.innerHTML='<div class="state"><span class="spin"></span><p>Loading metrics…</p></div>';
+  try{
+    render(await getData());
+  }catch(err){
+    main.innerHTML='<div class="state"><h2>Could not load data</h2><p>'+esc(err.message)+
+      '</p><p>Check the <code>WEB_APP_URL</code> in this file, or open the demo by '+
+      'double-clicking <code>index.html</code>.</p></div>';
+  }
+}
+
+function render(d){
+  charts.forEach(c=>c.destroy()); charts=[];
+  const kpis=d.kpis||[], trend=d.trend||[], details=d.details||[];
+  document.getElementById("updated").textContent="Updated "+fmtDate(d.meta&&d.meta.updated);
+
+  let h='<section class="grid">';
+  kpis.forEach(k=>{
+    const v=num(k.value), t=num(k.target);
+    const pct=t?Math.round((v-t)/t*100):0;
+    const dir=(k.trend||"").toLowerCase()==="down"?"down":(k.trend||"").toLowerCase()==="up"?"up":(v>=t?"up":"down");
+    const deltaTxt=(t?((pct>=0?"+":"")+pct+"% vs target"):"");
+    h+='<div class="card"><div class="label"><span class="dot '+dir+'"></span>'+esc(k.metric)+'</div>'+
+       '<div class="value">'+esc(fmtNum(k.value))+esc(k.unit||"")+'</div>'+
+       '<div class="sub">Target: '+esc(fmtNum(k.target))+esc(k.unit||"")+
+       (deltaTxt?' &middot; <span class="delta '+dir+'">'+esc(deltaTxt)+'</span>':'')+'</div>'+
+       (k.period?'<div class="sub">'+esc(k.period)+'</div>':'')+'</div>';
+  });
+  h+='</section>';
+
+  h+='<div class="charts">'+
+     '<div class="chart-card"><h2>Trend over time</h2><canvas id="cTrend" height="150"></canvas></div>'+
+     '<div class="chart-card"><h2>Breakdown</h2><canvas id="cBreak" height="150"></canvas></div></div>';
+
+  // detail table
+  if(details.length){
+    const cols=Object.keys(details[0]);
+    h+='<h2 class="section-title">Details</h2><table id="tbl"><thead><tr>'+
+       cols.map((c,i)=>'<th data-i="'+i+'">'+esc(c)+'</th>').join('')+'</tr></thead><tbody>'+
+       details.map(r=>'<tr>'+cols.map(c=>'<td>'+esc(r[c])+'</td>').join('')+'</tr>').join('')+
+       '</tbody></table>';
+  }
+  document.getElementById("main").innerHTML=h;
+
+  drawTrend(trend);
+  drawBreak(details, kpis);
+  wireSort();
+}
+
+function drawTrend(trend){
+  if(!trend.length) return;
+  const periods=[...new Set(trend.map(r=>r.Period))];
+  const metrics=[...new Set(trend.map(r=>r.Metric))];
+  const datasets=metrics.map((m,i)=>({
+    label:m,
+    data:periods.map(p=>{const row=trend.find(r=>r.Period===p&&r.Metric===m);return row?num(row.Value):null;}),
+    borderColor:PALETTE[i%PALETTE.length],
+    backgroundColor:PALETTE[i%PALETTE.length],
+    tension:.3, borderWidth:3, pointRadius:3, fill:false
+  }));
+  charts.push(new Chart(document.getElementById("cTrend"),{
+    type:"line", data:{labels:periods,datasets},
+    options:{responsive:true,plugins:{legend:{position:"bottom"}},scales:{y:{beginAtZero:false}}}
+  }));
+}
+
+function drawBreak(details, kpis){
+  let labels=[], values=[];
+  if(details.length){
+    const cols=Object.keys(details[0]);
+    const labelCol=cols[0];
+    const numCol=cols.find((c,i)=>i>0 && details.every(r=>!isNaN(num(r[c]))) ) || cols[1];
+    details.forEach(r=>{ if(num(r[numCol])>0){ labels.push(r[labelCol]); values.push(num(r[numCol])); }});
+  }else{
+    kpis.forEach(k=>{labels.push(k.metric);values.push(num(k.value));});
+  }
+  charts.push(new Chart(document.getElementById("cBreak"),{
+    type:"doughnut",
+    data:{labels,datasets:[{data:values,backgroundColor:PALETTE,borderWidth:2,borderColor:"#fff"}]},
+    options:{responsive:true,plugins:{legend:{position:"bottom"}}}
+  }));
+}
+
+function wireSort(){
+  const tbl=document.getElementById("tbl"); if(!tbl) return;
+  tbl.querySelectorAll("th").forEach(th=>{
+    let asc=true;
+    th.addEventListener("click",()=>{
+      const i=+th.dataset.i, body=tbl.tBodies[0];
+      const rows=[...body.rows];
+      rows.sort((a,b)=>{
+        const x=a.cells[i].textContent, y=b.cells[i].textContent;
+        const nx=num(x),ny=num(y);
+        const both=!isNaN(parseFloat(x))&&!isNaN(parseFloat(y));
+        return (asc?1:-1)*(both?nx-ny:x.localeCompare(y));
+      });
+      asc=!asc; rows.forEach(r=>body.appendChild(r));
+    });
+  });
+}
+
+function fmtNum(v){const n=parseFloat(v);return isNaN(n)?(v||""):n.toLocaleString();}
+function fmtDate(iso){if(!iso)return"just now";try{return new Date(iso).toLocaleString();}catch(e){return iso;}}
+
+document.getElementById("refresh").addEventListener("click",load);
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<!--
+  Create AI-Powered Publications and Dashboards — workshop landing page.
+  CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | mguhlin.org | https://go.mgpd.org/lftx2606)
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create AI-Powered Publications and Dashboards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#002855; --navy-900:#001a3d; --navy-700:#003b7a;
+    --gold:#FFB81C; --gold-600:#d99a00;
+    --ink:#1a2230; --muted:#5a6577; --bg:#f4f6fa; --card:#ffffff; --border:#e2e8f0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:'Source Sans 3',-apple-system,Segoe UI,Roboto,sans-serif;line-height:1.6}
+  a{color:var(--navy-700)} a:hover{color:var(--gold-600)}
+  .hero{background:linear-gradient(160deg,var(--navy) 0%,var(--navy-900) 100%);color:#fff;
+    padding:60px 24px;border-bottom:6px solid var(--gold)}
+  .hero-inner{max-width:920px;margin:0 auto}
+  .hero .kicker{color:var(--gold);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;font-size:.82rem}
+  .hero h1{font-family:'Merriweather',serif;font-size:2.5rem;margin:.3em 0 .4em;line-height:1.15}
+  .hero p{font-size:1.12rem;color:#dbe5f2;margin:0}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+  h2.sec{font-family:'Merriweather',serif;color:var(--navy);font-size:1.6rem;
+    margin:48px 0 6px;border-left:5px solid var(--gold);padding-left:14px}
+  .sec-sub{color:var(--muted);margin:0 0 22px}
+  .welcome{background:#fff7e6;border:1px solid var(--gold);border-left:6px solid var(--gold);
+    border-radius:12px;padding:22px 26px;margin:34px 0 6px}
+  .welcome h2{margin:0 0 8px;color:var(--navy);font-size:1.3rem}
+  .welcome p{margin:0 0 12px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:20px}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden;
+    box-shadow:0 3px 14px rgba(0,40,85,.06);display:flex;flex-direction:column;transition:.15s}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,40,85,.13)}
+  .card .top{background:var(--navy);color:#fff;padding:18px 20px;border-bottom:3px solid var(--gold)}
+  .card .top .src{display:inline-block;background:var(--gold);color:var(--navy-900);font-weight:700;
+    font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+  .card .top h3{margin:0;font-size:1.18rem}
+  .card .body{padding:18px 20px;flex:1;display:flex;flex-direction:column}
+  .card .body p{margin:0 0 12px}
+  .card .impl{font-size:.9rem;color:var(--ink);background:#f0f4fa;border-radius:9px;padding:12px 14px;margin:0 0 16px}
+  .card .impl b{color:var(--navy)}
+  .card .impl ol{margin:6px 0 0;padding-left:20px}
+  .card .impl li{margin:3px 0}
+  .card .actions{margin-top:auto;display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-block;font-weight:700;text-decoration:none;border-radius:8px;padding:9px 16px;font-size:.9rem}
+  .btn-primary{background:var(--gold);color:var(--navy-900)} .btn-primary:hover{background:#ffc94d;color:var(--navy-900)}
+  .btn-ghost{background:transparent;color:var(--navy-700);border:1.5px solid var(--border)}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-600)}
+  .btn-dl{background:var(--navy);color:#fff} .btn-dl:hover{background:var(--navy-700);color:#fff}
+  .btn-big{font-size:1.05rem;padding:13px 24px}
+  .dl-all{background:var(--card);border:1px solid var(--border);border-left:6px solid var(--gold);
+    border-radius:14px;padding:22px 26px;display:flex;align-items:center;justify-content:space-between;
+    gap:18px;flex-wrap:wrap;box-shadow:0 3px 14px rgba(0,40,85,.06)}
+  .host{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px 26px;margin:14px 0 10px;
+    box-shadow:0 3px 14px rgba(0,40,85,.06)}
+  .host h3{color:var(--navy);margin:18px 0 6px;font-size:1.15rem}
+  .host h3:first-child{margin-top:0}
+  .host ol{padding-left:22px} .host li{margin:6px 0}
+  .host code,.card code{background:#eef2f8;border:1px solid var(--border);border-radius:5px;padding:1px 6px;
+    font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em}
+  .pill-row{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 0}
+  .pill{background:#eef3fb;border:1px solid var(--border);color:var(--navy-700);border-radius:999px;
+    padding:4px 12px;font-size:.85rem}
+  .site-footer{background:var(--navy);color:#fff;text-align:center;padding:30px 20px;margin-top:54px}
+  .site-footer a{color:var(--gold);text-decoration:none}
+  .site-footer a:hover{text-decoration:underline}
+  .site-footer .contact-line{color:#cdd9ea;font-size:.92rem;margin-top:6px}
+  @media (max-width:600px){.hero h1{font-size:1.9rem}.hero{padding:44px 20px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="kicker">Learning Loop Architects · Hands-On Workshop</div>
+    <h1>Create AI-Powered Publications and Dashboards</h1>
+    <p>With educators consuming 3x more digital content than five years ago, the challenge
+      isn’t finding information. Rather, it is transforming it into meaningful learning
+      experiences. This hands-on workshop addresses teacher workload concerns by teaching
+      participants to become “Learning Loop Architects,” mastering AI-powered workflows that
+      turn chaotic content curation into streamlined, professional digital publications. You
+      will see how to make KPI dashboards, save web-based data into Google Sheets via
+      AI-generated AppScripts, and more.</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="welcome">
+    <h2>👋 New here? Start in 30 seconds</h2>
+    <p>Every example below works <b>right now</b> with built-in sample content — just click
+      a <b>Open demo</b> button. No account, no setup. When you're ready to use your own
+      content, open that example's <code>setup.md</code> for friendly, click-by-click steps.</p>
+    <p style="margin-bottom:0"><a class="btn btn-primary" href="guide.html?doc=START-HERE.md">📖 Read the Start-Here guide</a></p>
+  </div>
+
+  <h2 class="sec">Five Solutions to Build</h2>
+  <p class="sec-sub">Each is a self-contained website in its own folder, with a
+    <code>readme.md</code>, <code>setup.md</code>, the data connector, and a live demo that
+    works offline before you connect your own data. The content examples (Newsletter, Online
+    Magazine, Reading-List Digest, Resource Directory) also have a one-click bar to
+    <b>Copy as Markdown / HTML / formatted-for-email</b> — so you can paste a finished piece
+    straight into Gmail, Mailchimp, a CMS, or a doc.</p>
+
+  <div class="cards">
+
+    <!-- 1 -->
+    <div class="card">
+      <div class="top">
+        <span class="src">Google Sheets</span>
+        <h3>1 · Newsletter</h3>
+      </div>
+      <div class="body">
+        <p>A branded, print-ready newsletter (“The Learning Loop” style) built live from a
+          spreadsheet — editors write in tabs, readers get a polished web issue.</p>
+        <div class="impl">
+          <b>How to implement</b>
+          <ol>
+            <li>Run <code>createNewsletterTemplate()</code> in <code>code.gs</code> to auto-build the Sheet.</li>
+            <li>Deploy <code>code.gs</code> as a Web App; copy the <code>/exec</code> URL.</li>
+            <li>Paste it into <code>WEB_APP_URL</code> in <code>index.html</code>.</li>
+          </ol>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="newsletter-sheets/index.html">Open demo</a>
+          <a class="btn btn-ghost" href="guide.html?doc=newsletter-sheets/setup.md">Setup guide</a>
+          <a class="btn btn-dl" href="downloads/newsletter-sheets.zip" download>⬇ ZIP</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="card">
+      <div class="top">
+        <span class="src">Google Sheets</span>
+        <h3>2 · KPI Dashboard</h3>
+      </div>
+      <div class="body">
+        <p>A performance dashboard with KPI cards, trend &amp; breakdown charts, and a
+          sortable table — numbers pulled straight from a Google Sheet.</p>
+        <div class="impl">
+          <b>How to implement</b>
+          <ol>
+            <li>Run <code>createDashboardTemplate()</code> in <code>code.gs</code> to auto-build the Sheet.</li>
+            <li>Deploy <code>code.gs</code> as a Web App; copy the <code>/exec</code> URL.</li>
+            <li>Paste it into <code>WEB_APP_URL</code> in <code>index.html</code>.</li>
+          </ol>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="kpi-dashboard/index.html">Open demo</a>
+          <a class="btn btn-ghost" href="guide.html?doc=kpi-dashboard/setup.md">Setup guide</a>
+          <a class="btn btn-dl" href="downloads/kpi-dashboard.zip" download>⬇ ZIP</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card">
+      <div class="top">
+        <span class="src">Google Docs</span>
+        <h3>3 · Online Magazine</h3>
+      </div>
+      <div class="body">
+        <p>An online magazine whose articles are authored in Google Docs. A script converts
+          each Doc to clean HTML; the site lists and renders every issue.</p>
+        <div class="impl">
+          <b>How to implement</b>
+          <ol>
+            <li>Put article Docs in one Drive folder (with metadata lines).</li>
+            <li>Set <code>FOLDER_ID</code> in <code>code.gs</code>, deploy as a Web App.</li>
+            <li>Paste the <code>/exec</code> URL into <code>index.html</code> &amp; <code>article.html</code>.</li>
+          </ol>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="publication-docs/index.html">Open demo</a>
+          <a class="btn btn-ghost" href="guide.html?doc=publication-docs/setup.md">Setup guide</a>
+          <a class="btn btn-dl" href="downloads/publication-docs.zip" download>⬇ ZIP</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card">
+      <div class="top">
+        <span class="src">Markdown</span>
+        <h3>4 · Reading-List Digest</h3>
+      </div>
+      <div class="body">
+        <p>A curated link digest rendered from plain Markdown files — no Google account, no
+          backend. Drop a <code>.md</code> file in <code>content/</code> to add an issue.</p>
+        <div class="impl">
+          <b>How to implement</b>
+          <ol>
+            <li>Write each issue as a Markdown file in <code>content/</code>.</li>
+            <li>Add it to the <code>ISSUES</code> array in <code>index.html</code>.</li>
+            <li>Serve over http (no script to deploy).</li>
+          </ol>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="digest-markdown/index.html">Open demo</a>
+          <a class="btn btn-ghost" href="guide.html?doc=digest-markdown/setup.md">Setup guide</a>
+          <a class="btn btn-dl" href="downloads/digest-markdown.zip" download>⬇ ZIP</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="card">
+      <div class="top">
+        <span class="src">Google Sheets</span>
+        <h3>5 · Resource Directory</h3>
+      </div>
+      <div class="body">
+        <p>A searchable, filterable catalog of tools and resources — full-text search,
+          category &amp; tag filters, and sorting, all from a single spreadsheet.</p>
+        <div class="impl">
+          <b>How to implement</b>
+          <ol>
+            <li>Create a <code>Resources</code> tab (title, url, category, tags…).</li>
+            <li>Deploy <code>code.gs</code> as a Web App; copy the <code>/exec</code> URL.</li>
+            <li>Paste it into <code>WEB_APP_URL</code> in <code>index.html</code>.</li>
+          </ol>
+        </div>
+        <div class="actions">
+          <a class="btn btn-primary" href="resource-directory/index.html">Open demo</a>
+          <a class="btn btn-ghost" href="guide.html?doc=resource-directory/setup.md">Setup guide</a>
+          <a class="btn btn-dl" href="downloads/resource-directory.zip" download>⬇ ZIP</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h2 class="sec">Download the Files</h2>
+  <p class="sec-sub">Grab one project, or the whole kit. Each ZIP contains the ready-to-run
+    website plus its <code>readme.md</code> and <code>setup.md</code>.</p>
+  <div class="dl-all">
+    <div>
+      <h3 style="margin:0 0 4px;color:var(--navy)">Everything in one file</h3>
+      <p style="margin:0;color:var(--muted)">All five examples, this menu page, and the
+        Start-Here guide.</p>
+    </div>
+    <a class="btn btn-primary btn-big" href="downloads/all-examples.zip" download>⬇ Download all examples (.zip)</a>
+  </div>
+  <p style="color:var(--muted);font-size:.9rem;margin:10px 2px 0">
+    Prefer individual projects? Use the <b>⬇ ZIP</b> button on any card above.</p>
+
+  <h2 class="sec">Host It Online — Free</h2>
+  <p class="sec-sub">Every example is plain HTML/CSS/JS — no build step — so it runs on any
+    static host. Two easy paths:</p>
+
+  <div class="host">
+    <h3>Option A · GitHub Pages (free, recommended)</h3>
+    <ol>
+      <li>Create a free account at <a href="https://github.com" target="_blank" rel="noopener">github.com</a>.</li>
+      <li>Click <b>New repository</b>, name it (e.g. <code>ai-powered-pubs</code>), make it <b>Public</b>, <b>Create</b>.</li>
+      <li>Upload this whole folder: on the repo page choose <b>Add file → Upload files</b>, drag in
+        <b>everything</b> here (the five example folders, the <code>downloads</code> folder,
+        <code>index.html</code>, and <code>START-HERE.md</code>), then <b>Commit changes</b>.
+        (Or use Git: <code>git init</code>, <code>git add .</code>, <code>git commit -m "publish"</code>,
+        <code>git remote add origin &lt;repo-url&gt;</code>, <code>git push -u origin main</code>.)</li>
+      <li>Go to <b>Settings → Pages</b>. Under <b>Build and deployment</b>, set
+        <b>Source: Deploy from a branch</b>, <b>Branch: main</b>, folder <b>/ (root)</b>, <b>Save</b>.</li>
+      <li>Wait ~1 minute. Your site is live at
+        <code>https://&lt;your-username&gt;.github.io/&lt;repo-name&gt;/</code>.
+        The menu is the root <code>index.html</code>; each card links to its example.</li>
+    </ol>
+    <div class="pill-row">
+      <span class="pill">HTTPS automatically</span>
+      <span class="pill">Custom domain supported</span>
+      <span class="pill">Re-deploys on every push</span>
+    </div>
+  </div>
+
+  <div class="host">
+    <h3>Option B · Any web server</h3>
+    <ol>
+      <li>Copy the folders into your server’s web root (e.g. <code>/var/www/html/</code>) or
+        upload via SFTP / your host’s file manager.</li>
+      <li>Make sure <code>index.html</code> is at the path you want; the example folders sit beside it.</li>
+      <li>Visit your domain — done. (For a quick local preview first, run
+        <code>python3 -m http.server 8000</code> in this folder and open
+        <a href="http://localhost:8000" target="_blank" rel="noopener">http://localhost:8000</a>.)</li>
+    </ol>
+    <p style="margin:6px 0 0;color:var(--muted);font-size:.92rem">Why a server and not a double-click?
+      Browsers block <code>fetch()</code> of local files over <code>file://</code>, so the demos need
+      to be served over <code>http(s)</code>. GitHub Pages and any web host do this for you.</p>
+  </div>
+
+  <div class="host">
+    <h3>A note on the Apps Script connectors</h3>
+    <p style="margin:0">The Google-powered examples (1, 2, 3, 5) need their <code>code.gs</code>
+      deployed as a Web App and the resulting <code>/exec</code> URL pasted into the page — see each
+      example’s <code>setup.md</code>. Until then, every demo runs on bundled sample data, so you can
+      host and explore the whole site before connecting any live data.</p>
+  </div>
+
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="cc-line"><a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a> &middot; Miguel Guhlin</p>
+    <p class="contact-line">
+      <a href="mailto:mguhlin@tcea.org">mguhlin@tcea.org</a> &middot;
+      <a href="https://mguhlin.org" target="_blank" rel="noopener">mguhlin.org</a> &middot;
+      <a href="https://go.mgpd.org/lftx2606" target="_blank" rel="noopener">go.mgpd.org/lftx2606</a>
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>
