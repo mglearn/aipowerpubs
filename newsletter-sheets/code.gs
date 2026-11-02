@@ -15,7 +15,7 @@
  *      Who has access: Anyone → Deploy. Copy the /exec URL.
  *   5. Paste that URL into WEB_APP_URL in index.html.
  *
- * CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | mguhlin.org |
+ * CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | blog.tcea.org |
  *   https://go.mgpd.org/lftx2606)
  * ----------------------------------------------------------------------------
  */

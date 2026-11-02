@@ -94,4 +94,4 @@ and switch on **GitHub Pages**.
 
 ---
 CC BY-SA 4.0 — Miguel Guhlin · [mguhlin@tcea.org](mailto:mguhlin@tcea.org) ·
-[mguhlin.org](https://mguhlin.org) · [go.mgpd.org/lftx2606](https://go.mgpd.org/lftx2606)
+[blog.tcea.org](https://blog.tcea.org) · [go.mgpd.org/lftx2606](https://go.mgpd.org/lftx2606)

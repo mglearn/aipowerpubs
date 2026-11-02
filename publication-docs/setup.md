@@ -111,4 +111,4 @@ main `index.html`. One-line summary: upload the whole project to a free GitHub
 repository and turn on GitHub Pages.
 
 ---
-CC BY-SA 4.0 — Miguel Guhlin · [mguhlin@tcea.org](mailto:mguhlin@tcea.org) · [mguhlin.org](https://mguhlin.org) · [go.mgpd.org/lftx2606](https://go.mgpd.org/lftx2606)
+CC BY-SA 4.0 — Miguel Guhlin · [mguhlin@tcea.org](mailto:mguhlin@tcea.org) · [blog.tcea.org](https://blog.tcea.org) · [go.mgpd.org/lftx2606](https://go.mgpd.org/lftx2606)

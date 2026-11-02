@@ -22,7 +22,7 @@
  *      Copy the /exec URL and paste it into WEB_APP_URL in index.html.
  *
  * Attribution: CC BY-SA 4.0 · Miguel Guhlin
- *   mguhlin@tcea.org · https://mguhlin.org · https://go.mgpd.org/lftx2606
+ *   mguhlin@tcea.org · https://blog.tcea.org · https://go.mgpd.org/lftx2606
  * ------------------------------------------------------------------
  */
 

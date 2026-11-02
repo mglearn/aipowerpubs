@@ -5,7 +5,7 @@
 #
 # Usage:  bash make-zips.sh
 #
-# CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | mguhlin.org | https://go.mgpd.org/lftx2606)
+# CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | blog.tcea.org | https://go.mgpd.org/lftx2606)
 
 set -e
 cd "$(dirname "$0")"

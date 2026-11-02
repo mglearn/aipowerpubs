@@ -15,7 +15,7 @@
  *   3. Deploy → New deployment → Web app → Execute as Me → Anyone → copy /exec URL.
  *   4. Paste that URL into WEB_APP_URL in index.html.
  *
- * CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | mguhlin.org |
+ * CC BY-SA 4.0 — Miguel Guhlin (mguhlin@tcea.org | blog.tcea.org |
  *   https://go.mgpd.org/lftx2606)
  * ----------------------------------------------------------------------------
  */

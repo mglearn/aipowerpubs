@@ -134,5 +134,5 @@ main `index.html`.
 ---
 [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) — Miguel Guhlin ·
 [mguhlin@tcea.org](mailto:mguhlin@tcea.org) ·
-[mguhlin.org](https://mguhlin.org) ·
+[blog.tcea.org](https://blog.tcea.org) ·
 [go.mgpd.org/lftx2606](https://go.mgpd.org/lftx2606)

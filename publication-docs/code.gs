@@ -30,7 +30,7 @@
  *
  * ----------------------------------------------------------------------------
  * Attribution: CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/)
- * Miguel Guhlin  ·  mguhlin@tcea.org  ·  https://mguhlin.org
+ * Miguel Guhlin  ·  mguhlin@tcea.org  ·  https://blog.tcea.org
  * https://go.mgpd.org/lftx2606
  * ----------------------------------------------------------------------------
  */

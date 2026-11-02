@@ -138,4 +138,4 @@ This works **great on GitHub Pages** because Pages serves your files over `https
 
 ---
 
-[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · Miguel Guhlin · mguhlin@tcea.org · https://mguhlin.org
+[CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/) · Miguel Guhlin · mguhlin@tcea.org · https://blog.tcea.org
